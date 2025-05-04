@@ -18,13 +18,32 @@
         />
       </a-col>
       <a-col flex="150px">
-        <div class="user-login-status">
-          <div v-if="loginUserStore.loginUser.id">
-            {{ loginUserStore.loginUser.userName }}
-          </div>
-          <div v-else>
-            <a-button type="primary" href="/user/login">登录</a-button>
-          </div>
+        <a-dropdown v-if="loginUserStore.loginUser.id">
+          <a class="ant-dropdown-link" @click.prevent>
+            <div class="user-login-status">
+              <a-avatar class="avatar" size="large" :src="loginUserStore.loginUser.userAvatar">
+              </a-avatar>
+              <div class="userAccount">
+                {{ loginUserStore.loginUser.userAccount }}
+                <DownOutlined />
+              </div>
+            </div>
+          </a>
+          <template #overlay>
+            <a-menu @click="doDropMenuClick">
+              <a-menu-item key="logout">
+                <a target="_self" rel="noopener noreferrer" href="javascript:void(0)">
+                  <LogoutOutlined />
+                  注销登录
+                </a>
+              </a-menu-item>
+            </a-menu>
+          </template>
+        </a-dropdown>
+        <div v-else>
+          <RouterLink to="/user/login">
+            <a-button type="primary">登录</a-button>
+          </RouterLink>
         </div>
       </a-col>
     </a-row>
@@ -32,28 +51,29 @@
 </template>
 <script lang="ts" setup>
 import { h, ref } from 'vue'
-import { HomeOutlined } from '@ant-design/icons-vue'
-import { MenuProps } from 'ant-design-vue'
+import { HomeOutlined, DownOutlined, LogoutOutlined } from '@ant-design/icons-vue'
+import { MenuProps, message } from 'ant-design-vue'
 import { useRouter } from 'vue-router'
 import { useLoginUserStore } from '@/stores/loginUserStore.ts'
+import { userLogoutUsingPost } from '@/api/yonghuxiangguanjiekou.ts'
 
 const items = ref<MenuProps['items']>([
   {
     key: '/',
     icon: () => h(HomeOutlined),
     label: '主页',
-    title: '主页'
+    title: '主页',
   },
   {
     key: '/about',
     label: '关于',
-    title: '关于'
+    title: '关于',
   },
   {
     key: 'others',
     label: h('a', { href: 'https://www.codefather.cn', target: '_blank' }, '编程导航'),
-    title: '编程导航'
-  }
+    title: '编程导航',
+  },
 ])
 
 const router = useRouter()
@@ -71,6 +91,22 @@ router.afterEach((to, from, next) => {
 const doMenuClick = ({ key }) => {
   router.push({ path: key })
 }
+
+// 下拉菜单点击事件
+const doDropMenuClick = async (item) => {
+  if (item.key === 'logout') {
+    const res = await userLogoutUsingPost()
+    if (res.data.code === 0) {
+      loginUserStore.setLoginUser({
+        userName: '未登录',
+      })
+      message.success('退出登录成功')
+      await router.replace('/user/login')
+    } else {
+      message.error('退出登录失败，' + res.data.message)
+    }
+  }
+}
 </script>
 
 <style scoped>
@@ -87,5 +123,18 @@ const doMenuClick = ({ key }) => {
 
 #global-header .title {
   font-size: 24px;
+}
+
+#global-header .user-login-status {
+  display: flex;
+  align-items: center;
+}
+
+#global-header .user-login-status .userAccount {
+  color: #000;
+}
+
+#global-header .avatar {
+  margin-right: 10px;
 }
 </style>
