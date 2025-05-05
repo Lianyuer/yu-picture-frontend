@@ -59,9 +59,14 @@
           {{ record.userAccount }}
         </template>
         <template v-else-if="column.key === 'userName'">
-          <span>
+          <a-input
+            v-if="editableData[record.id]"
+            v-model:value="editableData[record.id][column.dataIndex]"
+            style="margin: -5px 0"
+          />
+          <template v-else>
             {{ record.userName }}
-          </span>
+          </template>
         </template>
         <template v-else-if="column.key === 'userAvatar'">
           <span>
@@ -69,16 +74,29 @@
           </span>
         </template>
         <template v-else-if="column.key === 'userProfile'">
-          <span>
+          <a-textarea
+            v-if="editableData[record.id]"
+            v-model:value="editableData[record.id][column.dataIndex]"
+            style="margin: -5px 0"
+          />
+          <template v-else>
             {{ record.userProfile }}
-          </span>
+          </template>
         </template>
         <template v-else-if="column.key === 'userRole'">
-          <span>
+          <a-select
+            v-if="editableData[record.id]"
+            v-model:value="editableData[record.id][column.dataIndex]"
+            style="margin: -5px 0; width: 100px"
+          >
+            <a-select-option value="admin">管理员</a-select-option>
+            <a-select-option value="user">普通用户</a-select-option>
+          </a-select>
+          <template v-else>
             <a-tag :color="record.userRole == 'admin' ? 'success' : 'processing'">
               {{ record.userRole == 'admin' ? '管理员' : '普通用户' }}
             </a-tag>
-          </span>
+          </template>
         </template>
         <template v-else-if="column.key === 'createTime'">
           <span>
@@ -87,9 +105,24 @@
         </template>
         <template v-else-if="column.key === 'action'">
           <span>
-            <a>编辑</a>
+            <span v-if="editableData[record.id]">
+              <a-typography-link @click="save(record.id)">保存 </a-typography-link>
+              <a-popconfirm title="确认取消吗?" @confirm="cancel(record.id)">
+                <a>取消</a>
+              </a-popconfirm>
+            </span>
+            <span v-else>
+              <a @click="edit(record.id)">编辑</a>
+            </span>
             <a-divider type="vertical" />
-            <a>删除</a>
+            <a-popconfirm
+              title="确认删除该用户吗?"
+              ok-text="确认"
+              cancel-text="取消"
+              @confirm="onConfirm(record.id)"
+            >
+              <a>删除</a>
+            </a-popconfirm>
           </span>
         </template>
       </template>
@@ -97,9 +130,14 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { computed, onMounted, reactive, ref } from 'vue'
-import { listUserVoByPageUsingPost } from '@/api/yonghuxiangguanjiekou.ts'
-import { type FormInstance, message } from 'ant-design-vue'
+import { cloneDeep } from 'lodash-es'
+import { computed, onMounted, reactive, ref, type UnwrapRef } from 'vue'
+import {
+  deleteUserUsingPost,
+  listUserVoByPageUsingPost,
+  updateUserUsingPost,
+} from '@/api/yonghuxiangguanjiekou.ts'
+import { message } from 'ant-design-vue'
 import dayjs from 'dayjs'
 const columns = [
   {
@@ -148,11 +186,56 @@ const columns = [
 let dataList = ref<any>([])
 const total = ref<number>(0)
 
+interface DataItem {
+  id: string
+  userName: string
+  userProfile: string
+}
+
+// 行内编辑
+const editableData: UnwrapRef<Record<string, DataItem>> = reactive({})
+
+const edit = (key: string) => {
+  editableData[key] = cloneDeep(dataList.value.filter((item) => key === item.id)[0])
+}
+const save = async (key: string) => {
+  Object.assign(dataList.value.filter((item) => key === item.id)[0], editableData[key])
+  console.log(',editableData[key]', editableData[key])
+  const res = await updateUserUsingPost(editableData[key])
+  if (res.data.code === 0) {
+    message.success('修改成功')
+  } else {
+    message.warning('修改失败' + res.data.message)
+  }
+  delete editableData[key]
+}
+const cancel = (key: string) => {
+  delete editableData[key]
+}
+
 // 搜索条件
 const searchParams = reactive<API.UserQueryDTO>({
   current: 1,
   size: 10,
 })
+
+const onConfirm = (id: number) => {
+  doDelete(id)
+  fetchData()
+}
+
+// 删除操作
+const doDelete = async (id: number) => {
+  const res = await deleteUserUsingPost({ id })
+  if (res.data.code === 0) {
+    message.success('删除成功')
+    if (dataList.value.length == 1) {
+      searchParams.current--
+    }
+  } else {
+    message.error('删除失败，' + res.data.message)
+  }
+}
 
 const doSearch = () => {
   searchParams.current = 1
