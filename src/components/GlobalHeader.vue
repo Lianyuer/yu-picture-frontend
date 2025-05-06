@@ -50,14 +50,18 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { h, ref } from 'vue'
+import { computed, h, ref } from 'vue'
 import { HomeOutlined, DownOutlined, LogoutOutlined } from '@ant-design/icons-vue'
 import { MenuProps, message } from 'ant-design-vue'
 import { useRouter } from 'vue-router'
 import { useLoginUserStore } from '@/stores/loginUserStore.ts'
 import { userLogoutUsingPost } from '@/api/yonghuxiangguanjiekou.ts'
 
-const items = ref<MenuProps['items']>([
+const router = useRouter()
+const loginUserStore = useLoginUserStore()
+
+// 菜单列表
+const originItems = [
   {
     key: '/',
     icon: () => h(HomeOutlined),
@@ -74,10 +78,22 @@ const items = ref<MenuProps['items']>([
     label: h('a', { href: 'https://www.codefather.cn', target: '_blank' }, '编程导航'),
     title: '编程导航',
   },
-])
+]
 
-const router = useRouter()
-const loginUserStore = useLoginUserStore()
+// 过滤菜单项
+const filterMenus = (menus = [] as MenuProps['items']) => {
+  return menus?.filter((menu) => {
+    if (menu?.key?.startsWith('/admin')) {
+      const loginUser = loginUserStore.loginUser
+      if (!loginUser || loginUser.userRole != 'admin') {
+        return false
+      }
+    }
+    return true
+  })
+}
+
+const items = computed<MenuProps['items']>(() => filterMenus(originItems))
 
 // 当前要高亮的菜单项
 const current = ref<string[]>([])
@@ -88,12 +104,12 @@ router.afterEach((to, from, next) => {
 })
 
 // 路由跳转事件
-const doMenuClick = ({ key }) => {
+const doMenuClick = ({ key }: any) => {
   router.push({ path: key })
 }
 
 // 下拉菜单点击事件
-const doDropMenuClick = async (item) => {
+const doDropMenuClick = async (item: any) => {
   if (item.key === 'logout') {
     const res = await userLogoutUsingPost()
     if (res.data.code === 0) {
