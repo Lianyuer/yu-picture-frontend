@@ -21,7 +21,15 @@
         <a-dropdown v-if="loginUserStore.loginUser.id">
           <a class="ant-dropdown-link" @click.prevent>
             <div class="user-login-status">
-              <a-avatar class="avatar" size="large" :src="loginUserStore.loginUser.userAvatar">
+              <a-avatar
+                style="color: #f56a00; background-color: #fde3cf"
+                class="avatar"
+                size="large"
+                :src="loginUserStore.loginUser.userAvatar"
+              >
+                <template #icon>
+                  <UserOutlined />
+                </template>
               </a-avatar>
               <div class="userAccount">
                 {{ loginUserStore.loginUser.userAccount }}
@@ -51,7 +59,7 @@
 </template>
 <script lang="ts" setup>
 import { computed, h, ref } from 'vue'
-import { HomeOutlined, DownOutlined, LogoutOutlined } from '@ant-design/icons-vue'
+import { HomeOutlined, DownOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons-vue'
 import { MenuProps, message } from 'ant-design-vue'
 import { useRouter } from 'vue-router'
 import { useLoginUserStore } from '@/stores/loginUserStore.ts'
@@ -67,18 +75,18 @@ const menus = [
     key: '/',
     icon: () => h(HomeOutlined),
     label: '主页',
-    title: '主页'
+    title: '主页',
   },
   {
     key: '/admin/userManage',
     label: '用户管理',
-    title: '用户管理'
+    title: '用户管理',
   },
   {
     key: 'others',
     label: h('a', { href: 'https://www.codefather.cn', target: '_blank' }, '编程导航'),
-    title: '编程导航'
-  }
+    title: '编程导航',
+  },
 ]
 
 // 过滤菜单项
@@ -101,7 +109,7 @@ const menuToRouteItem = (menu: any) => {
   const key = menu.key
   const routes = router.getRoutes()
   // 使用 find 方法更简洁
-  return routes.find(item => item.path === key)
+  return routes.find((item) => item.path === key)
 }
 
 // 过滤菜单项
@@ -136,7 +144,7 @@ const doDropMenuClick = async (item: any) => {
     const res = await userLogoutUsingPost()
     if (res.data.code === 0) {
       loginUserStore.setLoginUser({
-        userName: '未登录'
+        userName: '未登录',
       })
       message.success('退出登录成功')
       await router.replace('/user/login')
