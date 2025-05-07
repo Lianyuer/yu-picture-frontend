@@ -34,12 +34,15 @@ import { loginUsingPost } from '@/api/yonghuxiangguanjiekou.ts'
 import { message } from 'ant-design-vue'
 import router from '@/router'
 import { useLoginUserStore } from '@/stores/loginUserStore.ts'
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
 
 const loginUserStore = useLoginUserStore()
 
 const formState = reactive<API.UserLoginDTO>({
   userAccount: '',
-  userPassword: '',
+  userPassword: ''
 })
 
 const handleSubmit = async (values: any) => {
@@ -47,7 +50,8 @@ const handleSubmit = async (values: any) => {
   if (res.data.code === 0 && res.data.data) {
     await loginUserStore.fetchLoginUser()
     message.success('登录成功')
-    await router.replace('/')
+    const query = route.query.redirect ?? '/'
+    await router.replace(query as string)
   } else {
     message.warning(res.data.message)
   }
