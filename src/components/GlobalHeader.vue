@@ -56,44 +56,66 @@ import { MenuProps, message } from 'ant-design-vue'
 import { useRouter } from 'vue-router'
 import { useLoginUserStore } from '@/stores/loginUserStore.ts'
 import { userLogoutUsingPost } from '@/api/yonghuxiangguanjiekou.ts'
+import checkAccess from '@/access/checkAccess.ts'
 
 const router = useRouter()
 const loginUserStore = useLoginUserStore()
 
 // 菜单列表
-const originItems = [
+const menus = [
   {
     key: '/',
     icon: () => h(HomeOutlined),
     label: '主页',
-    title: '主页',
+    title: '主页'
   },
   {
     key: '/admin/userManage',
     label: '用户管理',
-    title: '用户管理',
+    title: '用户管理'
   },
   {
     key: 'others',
     label: h('a', { href: 'https://www.codefather.cn', target: '_blank' }, '编程导航'),
-    title: '编程导航',
-  },
+    title: '编程导航'
+  }
 ]
 
 // 过滤菜单项
-const filterMenus = (menus = [] as MenuProps['items']) => {
-  return menus?.filter((menu) => {
-    if (menu?.key?.startsWith('/admin')) {
-      const loginUser = loginUserStore.loginUser
-      if (!loginUser || loginUser.userRole != 'admin') {
-        return false
-      }
-    }
-    return true
-  })
+// const filterMenus = (menus = [] as MenuProps['items']) => {
+//   return menus?.filter((menu) => {
+//     if (menu?.key?.startsWith('/admin')) {
+//       const loginUser = loginUserStore.loginUser
+//       if (!loginUser || loginUser.userRole != 'admin') {
+//         return false
+//       }
+//     }
+//     return true
+//   })
+// }
+
+// const items = computed<MenuProps['items']>(() => filterMenus(menus))
+
+// menu 到路由 item 的转化
+const menuToRouteItem = (menu: any) => {
+  const key = menu.key
+  const routes = router.getRoutes()
+  // 使用 find 方法更简洁
+  return routes.find(item => item.path === key)
 }
 
-const items = computed<MenuProps['items']>(() => filterMenus(originItems))
+// 过滤菜单项
+const items = computed(() => {
+  return menus.filter((menu) => {
+    // todo 需要自己实现 menu 到路由 item 的转化
+    const item = menuToRouteItem(menu)
+    if (item?.meta?.hideInMenu) {
+      return false
+    }
+    // 根据权限过滤菜单，有权限则返回 true，则保留该菜单
+    return checkAccess(loginUserStore.loginUser, item?.meta?.access as string)
+  })
+})
 
 // 当前要高亮的菜单项
 const current = ref<string[]>([])
@@ -114,7 +136,7 @@ const doDropMenuClick = async (item: any) => {
     const res = await userLogoutUsingPost()
     if (res.data.code === 0) {
       loginUserStore.setLoginUser({
-        userName: '未登录',
+        userName: '未登录'
       })
       message.success('退出登录成功')
       await router.replace('/user/login')
