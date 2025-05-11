@@ -92,7 +92,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { computed, onMounted, reactive, ref, type UnwrapRef } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 
 import { message } from 'ant-design-vue'
 import dayjs from 'dayjs'
@@ -159,6 +159,13 @@ const searchParams = reactive<API.PictureQueryDTO>({
   searchText: '',
   category: '',
   tags: [],
+})
+
+// 监听搜索条件数据变化
+watch(searchParams, (newParams) => {
+  if (newParams.searchText === '' || newParams.category === '' || newParams.tags.length === 0) {
+    fetchData()
+  }
 })
 
 const tagOptions = ref<String[]>()
