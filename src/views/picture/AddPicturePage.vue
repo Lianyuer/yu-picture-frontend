@@ -4,11 +4,17 @@
     <!--  图片上传组件  -->
     <PictureUpload :picture="picture" :onSuccess="onSuccess" />
     <!--  图片信息表单  -->
-    <a-form :model="pictureForm" name="basic" autocomplete="off" @finish="handleSubmit">
-      <a-form-item name="name">
+    <a-form
+      v-if="picture"
+      :model="pictureForm"
+      name="basic"
+      autocomplete="off"
+      @finish="handleSubmit"
+    >
+      <a-form-item name="name" label="名称">
         <a-input v-model:value="pictureForm.name" placeholder="请输入名称" allow-clear />
       </a-form-item>
-      <a-form-item name="introduction">
+      <a-form-item name="introduction" label="简介">
         <a-textarea
           v-model:value="pictureForm.introduction"
           :auto-size="{ minRows: 2, maxRows: 4 }"
@@ -16,18 +22,20 @@
           allow-clear
         />
       </a-form-item>
-      <a-form-item name="category">
+      <a-form-item name="category" label="分类">
         <a-auto-complete
           v-model:value="pictureForm.category"
           placeholder="请输入分类"
+          :options="categoryOptions"
           allow-clear
         />
       </a-form-item>
-      <a-form-item name="tags">
+      <a-form-item name="tags" label="标签">
         <a-select
           v-model:value="pictureForm.tags"
           mode="tags"
           placeholder="请输入标签"
+          :options="tagOptions"
           allow-clear
         />
       </a-form-item>
@@ -41,8 +49,11 @@
 
 <script setup lang="ts">
 import PictureUpload from '@/components/PictureUpload.vue'
-import { reactive, ref } from 'vue'
-import { editPictureUsingPost } from '@/api/tupianxiangguanjiekou.ts'
+import { onMounted, reactive, ref } from 'vue'
+import {
+  editPictureUsingPost,
+  listPictureTagCategoryUsingGet,
+} from '@/api/tupianxiangguanjiekou.ts'
 import { message } from 'ant-design-vue'
 import { useRouter } from 'vue-router'
 
@@ -60,12 +71,40 @@ const onSuccess = (newPicture: API.PictureVO) => {
   pictureForm.name = newPicture.name
 }
 
+const tagOptions = ref<String[]>()
+const categoryOptions = ref<String[]>()
+
+// 获取标签分类列表
+const getPictureTagCategory = async () => {
+  const res = await listPictureTagCategoryUsingGet()
+  if (res.data.code === 0 && res.data.data) {
+    tagOptions.value = res.data.data.tagList.map((value) => {
+      return {
+        value: value,
+        text: value,
+      }
+    })
+    categoryOptions.value = res.data.data.categoryList.map((value) => {
+      return {
+        value: value,
+        text: value,
+      }
+    })
+  }
+}
+
+onMounted(() => {
+  getPictureTagCategory()
+})
+
 /**
  * 表单提交
  */
 const handleSubmit = async (values) => {
-  console.log(values)
-  const pictureId = picture.value.id
+  const pictureId = picture.value?.id
+  if (!pictureId) {
+    return
+  }
   const res = await editPictureUsingPost({
     id: pictureId,
     ...values,
