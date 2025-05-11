@@ -25,6 +25,14 @@ const router = createRouter({
       component: () => import('../views/picture/AddPicturePage.vue'),
     },
     {
+      path: '/admin/pictureManage',
+      name: '图片管理',
+      component: () => import('../views/admin/PictureManagePage.vue'),
+      meta: {
+        access: ACCESS_ENUM.ADMIN,
+      },
+    },
+    {
       path: '/admin/userManage',
       name: '用户管理',
       component: () => import('../views/admin/UserManagePage.vue'),
