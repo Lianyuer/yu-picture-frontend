@@ -1,6 +1,6 @@
 <template>
   <div id="add-picture-page">
-    <h2 style="margin-bottom: 22px">创建图片</h2>
+    <h2 style="margin-bottom: 22px">{{ route.query?.id ? '修改图片' : '创建图片' }}</h2>
     <!--  图片上传组件  -->
     <PictureUpload :picture="picture" :onSuccess="onSuccess" />
     <!--  图片信息表单  -->
@@ -41,7 +41,9 @@
       </a-form-item>
 
       <a-form-item>
-        <a-button block type="primary" html-type="submit">创建</a-button>
+        <a-button block type="primary" html-type="submit">{{
+          route.query?.id ? '保存' : '创建'
+        }}</a-button>
       </a-form-item>
     </a-form>
   </div>
@@ -52,15 +54,16 @@ import PictureUpload from '@/components/PictureUpload.vue'
 import { onMounted, reactive, ref } from 'vue'
 import {
   editPictureUsingPost,
+  getPictureVoByIdUsingGet,
   listPictureTagCategoryUsingGet,
 } from '@/api/tupianxiangguanjiekou.ts'
 import { message } from 'ant-design-vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 const router = useRouter()
 
 const picture = ref<API.PictureVO>()
-const pictureForm = reactive<API.PictureUpdateDTO>({})
+let pictureForm = reactive<API.PictureUpdateDTO>({})
 
 /**
  * 图片上传成功
@@ -93,10 +96,6 @@ const getPictureTagCategory = async () => {
   }
 }
 
-onMounted(() => {
-  getPictureTagCategory()
-})
-
 /**
  * 表单提交
  */
@@ -116,6 +115,28 @@ const handleSubmit = async (values) => {
     message.error('创建失败，' + res.data.message)
   }
 }
+
+const route = useRoute()
+const getOldPicture = async () => {
+  const id = route.query?.id
+  console.log(route)
+  if (id) {
+    const res = await getPictureVoByIdUsingGet({ id })
+    if (res.data.code === 0 && res.data.data) {
+      const data = res.data.data
+      picture.value = data
+      pictureForm.name = data.name
+      pictureForm.introduction = data.introduction
+      pictureForm.category = data.category
+      pictureForm.tags = data.tags
+    }
+  }
+}
+
+onMounted(() => {
+  getPictureTagCategory()
+  getOldPicture()
+})
 </script>
 
 <style scoped>
