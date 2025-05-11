@@ -60,8 +60,6 @@ import {
 import { message } from 'ant-design-vue'
 import { useRoute, useRouter } from 'vue-router'
 
-const router = useRouter()
-
 const picture = ref<API.PictureVO>()
 let pictureForm = reactive<API.PictureUpdateDTO>({})
 
@@ -96,6 +94,8 @@ const getPictureTagCategory = async () => {
   }
 }
 
+const router = useRouter()
+
 /**
  * 表单提交
  */
@@ -109,8 +109,13 @@ const handleSubmit = async (values) => {
     ...values,
   })
   if (res.data.code === 0 && res.data.data) {
-    message.success('创建成功')
-    router.push(`/picture/${pictureId}`)
+    if (route.query?.id) {
+      message.success('修改成功')
+      router.back()
+    } else {
+      message.success('创建成功')
+      router.push(`/picture/${pictureId}`)
+    }
   } else {
     message.error('创建失败，' + res.data.message)
   }
@@ -119,7 +124,6 @@ const handleSubmit = async (values) => {
 const route = useRoute()
 const getOldPicture = async () => {
   const id = route.query?.id
-  console.log(route)
   if (id) {
     const res = await getPictureVoByIdUsingGet({ id })
     if (res.data.code === 0 && res.data.data) {
