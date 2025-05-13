@@ -81,6 +81,19 @@ const fetchData = async () => {
   loading.value = false
 }
 
+const loginUserStore = useLoginUserStore()
+// 是否具有编辑权限
+const canEdit = computed(() => {
+  const loginUser = loginUserStore.loginUser
+  // 未登录不可编辑
+  if (!loginUser.id) {
+    return false
+  }
+  // 仅本人或管理员可编辑
+  const user = picture.value.user || {}
+  return loginUser.id === user.id || loginUser.userRole === 'admin'
+})
+
 const router = useRouter()
 
 // 跳转编辑
