@@ -38,9 +38,19 @@
                 {{ formatSize(picture.picSize) ?? '-' }}
               </a-descriptions-item>
             </a-descriptions>
-            <a-space v-if="canEdit">
-              <a-button @click="doEdit">编辑</a-button>
-              <a-button danger @click="doDelete">删除</a-button>
+            <a-space>
+              <a-button
+                :icon="h(DownloadOutlined)"
+                type="primary"
+                @click="doDownload"
+                v-if="canDownload"
+              >
+                免费下载
+              </a-button>
+              <a-space class="editOrDel" v-if="canEdit">
+                <a-button @click="doEdit" :icon="h(EditOutlined)">编辑</a-button>
+                <a-button danger :icon="h(DeleteOutlined)" @click="doDelete">删除</a-button>
+              </a-space>
             </a-space>
           </a-card>
         </a-col>
@@ -53,9 +63,11 @@
 import { computed, onMounted, ref } from 'vue'
 import { deletePictureUsingPost, getPictureVoByIdUsingGet } from '@/api/tupianxiangguanjiekou.ts'
 import { message } from 'ant-design-vue'
-import { useRouter } from 'vue-router'
-import { formatSize } from '@/utils'
+import { useRoute, useRouter } from 'vue-router'
+import { downloadImage, formatSize } from '@/utils'
 import { useLoginUserStore } from '@/stores/loginUserStore.ts'
+import { h } from 'vue'
+import { DownloadOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons-vue'
 
 // 定义数据
 const loading = ref(true)
@@ -95,6 +107,7 @@ const canEdit = computed(() => {
 })
 
 const router = useRouter()
+const route = useRoute()
 
 // 跳转编辑
 const doEdit = () => {
@@ -112,6 +125,23 @@ const doDelete = async () => {
   } else {
     message.error('删除失败，' + res.data.message)
   }
+}
+
+// 下载图片
+const doDownload = () => {
+  if (!canDownload()) {
+    message.error('请先登录')
+    let path = route.path
+    router.push('/user/login?redirect=' + path)
+    return
+  }
+  downloadImage(picture.value.url)
+}
+
+// 是否具有下载图片的权限 (已登录用户才可以下载图片)
+const canDownload = () => {
+  const loginUser = loginUserStore.loginUser
+  return loginUser.id
 }
 
 onMounted(() => {
