@@ -7,7 +7,7 @@
       @finish="doSearch"
     >
       <a-row :gutter="24">
-        <a-col :span="8">
+        <a-col :span="6">
           <a-form-item label="关键词">
             <a-input
               v-model:value="searchParams.searchText"
@@ -16,7 +16,7 @@
             ></a-input>
           </a-form-item>
         </a-col>
-        <a-col :span="8">
+        <a-col :span="6">
           <a-form-item label="类型">
             <a-auto-complete
               v-model:value="searchParams.category"
@@ -26,13 +26,24 @@
             />
           </a-form-item>
         </a-col>
-        <a-col :span="8">
+        <a-col :span="6">
           <a-form-item label="标签">
             <a-select
               v-model:value="searchParams.tags"
               mode="tags"
               placeholder="输入标签"
               :options="tagOptions"
+              allow-clear
+            />
+          </a-form-item>
+        </a-col>
+        <a-col :span="6">
+          <a-form-item label="审核状态" name="reviewStatus">
+            <a-select
+              v-model:value="searchParams.reviewStatus"
+              :options="PIC_REVIEW_STATUS_OPTIONS"
+              placeholder="请输入审核状态"
+              style="min-width: 180px"
               allow-clear
             />
           </a-form-item>
@@ -66,6 +77,12 @@
             <a-tag color="default" v-for="tag in record.tags">{{ tag }}</a-tag>
           </a-space>
         </template>
+        <!--    审核信息    -->
+        <template v-if="column.key === 'reviewMessage'">
+          <div>审核状态：{{ PIC_REVIEW_STATUS_MAP[record.reviewStatus] }}</div>
+          <div>审核信息：{{ record.reviewMessage }}</div>
+          <div>审核人：{{ record.reviewerId }}</div>
+        </template>
         <template v-else-if="column.key === 'createTime'">
           <span>
             {{ dayjs(record.createTime).format('YYYY-MM-DD HH:mm:ss') }}
@@ -73,10 +90,20 @@
         </template>
         <template v-else-if="column.key === 'action'">
           <span>
+            <span v-if="record.reviewStatus != PIC_REVIEW_STATUS_ENUM.PASS">
+              <a @click="handleReview(record, PIC_REVIEW_STATUS_ENUM.PASS)">通过</a>
+              <a-divider type="vertical" />
+            </span>
+
+            <span v-if="record.reviewStatus != PIC_REVIEW_STATUS_ENUM.REJECT">
+              <a @click="handleReview(record, PIC_REVIEW_STATUS_ENUM.REJECT)">拒绝</a>
+              <a-divider type="vertical" />
+            </span>
+
             <span>
               <a @click="edit(record.id)">编辑</a>
+              <a-divider type="vertical" />
             </span>
-            <a-divider type="vertical" />
             <a-popconfirm
               title="确认删除该图片吗?"
               ok-text="确认"
@@ -98,11 +125,19 @@ import { message } from 'ant-design-vue'
 import dayjs from 'dayjs'
 import {
   deletePictureUsingPost,
+  listPictureByPageUsingPost,
   listPictureTagCategoryUsingGet,
   listPictureVoByPageUsingPost,
+  pictureReviewUsingPost,
   updatePictureUsingPost,
 } from '@/api/tupianxiangguanjiekou.ts'
 import { useRouter } from 'vue-router'
+import {
+  PIC_REVIEW_STATUS_ENUM,
+  PIC_REVIEW_STATUS_MAP,
+  PIC_REVIEW_STATUS_OPTIONS,
+} from '../../constant/picture.ts'
+
 const columns = [
   {
     title: 'id',
@@ -131,6 +166,10 @@ const columns = [
   {
     title: '标签',
     key: 'tags',
+  },
+  {
+    title: '审核信息',
+    key: 'reviewMessage',
   },
   {
     title: '创建时间',
@@ -195,6 +234,24 @@ const onConfirm = (id: number) => {
   fetchData()
 }
 
+// 图片审核
+const handleReview = async (record: API.Picture, reviewStatus: number) => {
+  const reviewMessage =
+    reviewStatus === PIC_REVIEW_STATUS_ENUM.PASS ? '管理员操作通过' : '管理员操作拒绝'
+  const res = await pictureReviewUsingPost({
+    id: record.id,
+    reviewStatus,
+    reviewMessage,
+  })
+  if (res.data.code === 0 && res.data.data) {
+    message.success('审核操作成功')
+    // 重新获取数据列表
+    fetchData()
+  } else {
+    message.error('审核操作失败，' + res.data.message)
+  }
+}
+
 // 删除操作
 const doDelete = async (id: number) => {
   const res = await deletePictureUsingPost({ id })
@@ -230,7 +287,7 @@ const doTableChange = (page: any) => {
 
 // 获取数据
 const fetchData = async () => {
-  const res = await listPictureVoByPageUsingPost({
+  const res = await listPictureByPageUsingPost({
     ...searchParams,
   })
   if (res.data.data) {
