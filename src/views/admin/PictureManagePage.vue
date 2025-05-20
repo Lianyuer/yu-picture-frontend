@@ -77,6 +77,14 @@
             <a-tag color="default" v-for="tag in record.tags">{{ tag }}</a-tag>
           </a-space>
         </template>
+        <!--    图片信息    -->
+        <template v-if="column.key === 'pictureInfo'">
+          <div>格式：{{ record.picFormat }}</div>
+          <div>宽度：{{ record.picWidth }}</div>
+          <div>高度：{{ record.picHeight }}</div>
+          <div>宽高比：{{ record.picScale }}</div>
+          <div>大小：{{ formatSize(record.picSize) }}</div>
+        </template>
         <!--    审核信息    -->
         <template v-if="column.key === 'reviewMessage'">
           <div>审核状态：{{ PIC_REVIEW_STATUS_MAP[record.reviewStatus] }}</div>
@@ -137,6 +145,7 @@ import {
   PIC_REVIEW_STATUS_MAP,
   PIC_REVIEW_STATUS_OPTIONS,
 } from '../../constant/picture.ts'
+import { formatSize } from '../../utils'
 
 const columns = [
   {
@@ -166,6 +175,15 @@ const columns = [
   {
     title: '标签',
     key: 'tags',
+  },
+  {
+    title: '图片信息',
+    key: 'pictureInfo',
+  },
+  {
+    title: '用户id',
+    dataIndex: 'userId',
+    key: 'userId',
   },
   {
     title: '审核信息',
