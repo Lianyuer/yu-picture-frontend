@@ -44,7 +44,7 @@ const handleUpload = async ({ file }: any) => {
       // 将上传成功的图片信息传递给父组件
       props.onSuccess?.(res.data.data)
     } else {
-      message.error('上传失败，', res.data.message)
+      message.error('上传失败，' + res.data.message)
     }
   } catch (e: any) {
     console.log('图片上传失败，', e)
