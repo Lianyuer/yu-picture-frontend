@@ -1,8 +1,17 @@
 <template>
   <div id="add-picture-page">
     <h2 style="margin-bottom: 22px">{{ route.query?.id ? '修改图片' : '创建图片' }}</h2>
-    <!--  图片上传组件  -->
-    <PictureUpload :picture="picture" :onSuccess="onSuccess" />
+    <!--  上传图片方式选择  -->
+    <a-tabs v-model:activeKey="uploadType">
+      <a-tab-pane key="file" tab="文件上传">
+        <!--  图片上传组件  -->
+        <PictureUpload :picture="picture" :onSuccess="onSuccess" />
+      </a-tab-pane>
+      <a-tab-pane key="url" tab="URL 上传">
+        <!--  图片 URL 上传组件  -->
+        <UrlPictureUpload :picture="picture" :onSuccess="onSuccess" />
+      </a-tab-pane>
+    </a-tabs>
     <!--  图片信息表单  -->
     <a-form
       v-if="picture"
@@ -42,8 +51,9 @@
 
       <a-form-item>
         <a-button block type="primary" html-type="submit">{{
-          route.query?.id ? '保存' : '创建'
-        }}</a-button>
+            route.query?.id ? '保存' : '创建'
+          }}
+        </a-button>
       </a-form-item>
     </a-form>
   </div>
@@ -55,13 +65,15 @@ import { onMounted, reactive, ref } from 'vue'
 import {
   editPictureUsingPost,
   getPictureVoByIdUsingGet,
-  listPictureTagCategoryUsingGet,
+  listPictureTagCategoryUsingGet
 } from '@/api/tupianxiangguanjiekou.ts'
 import { message } from 'ant-design-vue'
 import { useRoute, useRouter } from 'vue-router'
+import UrlPictureUpload from '@/components/UrlPictureUpload.vue'
 
 const picture = ref<API.PictureVO>()
-let pictureForm = reactive<API.PictureUpdateDTO>({})
+const pictureForm = reactive<API.PictureUpdateDTO>({})
+const uploadType = ref<'file' | 'url'>('file')
 
 /**
  * 图片上传成功
@@ -72,8 +84,8 @@ const onSuccess = (newPicture: API.PictureVO) => {
   pictureForm.name = newPicture.name
 }
 
-const tagOptions = ref<String[]>()
-const categoryOptions = ref<String[]>()
+const tagOptions = ref<string[]>()
+const categoryOptions = ref<string[]>()
 
 // 获取标签分类列表
 const getPictureTagCategory = async () => {
@@ -82,13 +94,13 @@ const getPictureTagCategory = async () => {
     tagOptions.value = res.data.data.tagList.map((value) => {
       return {
         value: value,
-        text: value,
+        text: value
       }
     })
     categoryOptions.value = res.data.data.categoryList.map((value) => {
       return {
         value: value,
-        text: value,
+        text: value
       }
     })
   }
@@ -106,7 +118,7 @@ const handleSubmit = async (values) => {
   }
   const res = await editPictureUsingPost({
     id: pictureId,
-    ...values,
+    ...values
   })
   if (res.data.code === 0 && res.data.data) {
     if (route.query?.id) {

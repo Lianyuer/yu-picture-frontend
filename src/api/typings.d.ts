@@ -17,12 +17,6 @@ declare namespace API {
     message?: string
   }
 
-  type BaseResponsePagePicture_ = {
-    code?: number
-    data?: PagePicture_
-    message?: string
-  }
-
   type BaseResponsePagePictureVO_ = {
     code?: number
     data?: PagePictureVO_
@@ -106,14 +100,6 @@ declare namespace API {
     userName?: string
     userProfile?: string
     userRole?: string
-  }
-
-  type PagePicture_ = {
-    current?: number
-    pages?: number
-    records?: Picture[]
-    size?: number
-    total?: number
   }
 
   type PagePictureVO_ = {
@@ -208,6 +194,11 @@ declare namespace API {
     tags?: string[]
   }
 
+  type PictureUploadDTO = {
+    fileUrl?: string
+    id?: number
+  }
+
   type PictureVO = {
     category?: string
     createTime?: string
@@ -220,6 +211,10 @@ declare namespace API {
     picScale?: number
     picSize?: number
     picWidth?: number
+    reviewMessage?: string
+    reviewStatus?: number
+    reviewTime?: string
+    reviewerId?: number
     tags?: string[]
     updateTime?: string
     url?: string
@@ -233,6 +228,7 @@ declare namespace API {
   }
 
   type uploadPictureUsingPOSTParams = {
+    fileUrl?: string
     id?: number
   }
 

@@ -67,7 +67,7 @@ export async function listPictureByPageUsingPost(
   body: API.PictureQueryDTO,
   options?: { [key: string]: any }
 ) {
-  return request<API.BaseResponsePagePicture_>('/api/picture/list/page', {
+  return request<API.BaseResponsePagePictureVO_>('/api/picture/list/page', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -167,6 +167,21 @@ export async function uploadPictureUsingPost(
     },
     data: formData,
     requestType: 'form',
+    ...(options || {}),
+  })
+}
+
+/** 通过 URL 上传图片接口 POST /api/picture/upload/url */
+export async function uploadPictureByUrlUsingPost(
+  body: API.PictureUploadDTO,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponsePictureVO_>('/api/picture/upload/url', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
     ...(options || {}),
   })
 }
