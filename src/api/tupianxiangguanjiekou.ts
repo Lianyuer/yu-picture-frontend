@@ -171,6 +171,21 @@ export async function uploadPictureUsingPost(
   })
 }
 
+/** 批量抓取图片接口 POST /api/picture/upload/batch */
+export async function uploadPictureByBatchUsingPost(
+  body: API.PictureUploadByBatchDTO,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseInt_>('/api/picture/upload/batch', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  })
+}
+
 /** 通过 URL 上传图片接口 POST /api/picture/upload/url */
 export async function uploadPictureByUrlUsingPost(
   body: API.PictureUploadDTO,
