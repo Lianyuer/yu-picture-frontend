@@ -1,13 +1,22 @@
 <template>
   <div id="Picture-manage-page">
+    <a-flex justify="space-between">
+      <h2>图片管理</h2>
+      <a-space>
+        <a-button type="primary" href="/addPicture" target="_blank">+ 创建图片</a-button>
+        <a-button type="primary" ghost href="/addPicture/batch" target="_blank">+ 批量创建图片</a-button>
+      </a-space>
+    </a-flex>
+    <div style="margin-bottom: 16px"></div>
+    <!--  搜索表单  -->
     <a-form
       name="advanced_search"
       class="ant-advanced-search-form"
       :model="searchParams"
       @finish="doSearch"
     >
-      <a-row :gutter="24">
-        <a-col :span="6">
+      <a-row wrap="wrap" gutter="24">
+        <a-col flex="1 1 200px">
           <a-form-item label="关键词">
             <a-input
               v-model:value="searchParams.searchText"
@@ -16,7 +25,7 @@
             ></a-input>
           </a-form-item>
         </a-col>
-        <a-col :span="6">
+        <a-col flex="1 1 200px">
           <a-form-item label="类型">
             <a-auto-complete
               v-model:value="searchParams.category"
@@ -26,7 +35,7 @@
             />
           </a-form-item>
         </a-col>
-        <a-col :span="6">
+        <a-col flex="1 1 200px">
           <a-form-item label="标签">
             <a-select
               v-model:value="searchParams.tags"
@@ -37,7 +46,7 @@
             />
           </a-form-item>
         </a-col>
-        <a-col :span="6">
+        <a-col flex="1 1 200px">
           <a-form-item label="审核状态" name="reviewStatus">
             <a-select
               v-model:value="searchParams.reviewStatus"
@@ -48,9 +57,7 @@
             />
           </a-form-item>
         </a-col>
-      </a-row>
-      <a-row :gutter="24" justify="end">
-        <a-col>
+        <a-col flex="1 1 300px">
           <a-form-item>
             <a-button type="primary" html-type="submit">搜索</a-button>
           </a-form-item>
@@ -135,15 +142,13 @@ import {
   deletePictureUsingPost,
   listPictureByPageUsingPost,
   listPictureTagCategoryUsingGet,
-  listPictureVoByPageUsingPost,
-  pictureReviewUsingPost,
-  updatePictureUsingPost,
+  pictureReviewUsingPost
 } from '@/api/tupianxiangguanjiekou.ts'
 import { useRouter } from 'vue-router'
 import {
   PIC_REVIEW_STATUS_ENUM,
   PIC_REVIEW_STATUS_MAP,
-  PIC_REVIEW_STATUS_OPTIONS,
+  PIC_REVIEW_STATUS_OPTIONS
 } from '../../constant/picture.ts'
 import { formatSize } from '../../utils'
 
@@ -151,56 +156,56 @@ const columns = [
   {
     title: 'id',
     dataIndex: 'id',
-    key: 'id',
+    key: 'id'
   },
   {
     title: '图片',
-    key: 'url',
+    key: 'url'
   },
   {
     title: '名称',
     dataIndex: 'name',
-    key: 'name',
+    key: 'name'
   },
   {
     title: '简介',
     key: 'introduction',
-    dataIndex: 'introduction',
+    dataIndex: 'introduction'
   },
   {
     title: '类型',
     key: 'category',
-    dataIndex: 'category',
+    dataIndex: 'category'
   },
   {
     title: '标签',
-    key: 'tags',
+    key: 'tags'
   },
   {
     title: '图片信息',
-    key: 'pictureInfo',
+    key: 'pictureInfo'
   },
   {
     title: '用户id',
     dataIndex: 'userId',
-    key: 'userId',
+    key: 'userId'
   },
   {
     title: '审核信息',
-    key: 'reviewMessage',
+    key: 'reviewMessage'
   },
   {
     title: '创建时间',
-    key: 'createTime',
+    key: 'createTime'
   },
   {
     title: '操作',
-    key: 'action',
-  },
+    key: 'action'
+  }
 ]
 
 // 数据
-let dataList = ref<any>([])
+const dataList = ref<any>([])
 const total = ref<number>(0)
 
 const router = useRouter()
@@ -215,7 +220,7 @@ const searchParams = reactive<API.PictureQueryDTO>({
   size: 10,
   searchText: '',
   category: '',
-  tags: [],
+  tags: []
 })
 
 // 监听搜索条件数据变化
@@ -225,8 +230,8 @@ watch(searchParams, (newParams) => {
   }
 })
 
-const tagOptions = ref<String[]>()
-const categoryOptions = ref<String[]>()
+const tagOptions = ref<string[]>()
+const categoryOptions = ref<string[]>()
 
 // 获取标签分类列表
 const getPictureTagCategory = async () => {
@@ -235,13 +240,13 @@ const getPictureTagCategory = async () => {
     tagOptions.value = res.data.data.tagList.map((value) => {
       return {
         value: value,
-        text: value,
+        text: value
       }
     })
     categoryOptions.value = res.data.data.categoryList.map((value) => {
       return {
         value: value,
-        text: value,
+        text: value
       }
     })
   }
@@ -259,7 +264,7 @@ const handleReview = async (record: API.Picture, reviewStatus: number) => {
   const res = await pictureReviewUsingPost({
     id: record.id,
     reviewStatus,
-    reviewMessage,
+    reviewMessage
   })
   if (res.data.code === 0 && res.data.data) {
     message.success('审核操作成功')
@@ -293,7 +298,7 @@ const pagination = computed(() => ({
   current: searchParams.current ?? 1,
   pageSize: searchParams.size ?? 10,
   showSizeChanger: true,
-  showTotal: (total: number) => `共${total}条`,
+  showTotal: (total: number) => `共${total}条`
 }))
 
 // 表格变化处理
@@ -306,7 +311,7 @@ const doTableChange = (page: any) => {
 // 获取数据
 const fetchData = async () => {
   const res = await listPictureByPageUsingPost({
-    ...searchParams,
+    ...searchParams
   })
   if (res.data.data) {
     dataList.value = res.data.data.records ?? []
