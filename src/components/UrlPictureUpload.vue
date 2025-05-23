@@ -2,7 +2,9 @@
   <div class="url-picture-upload">
     <a-input-group compact>
       <a-input v-model:value="fileUrl" style="width: calc(100% - 120px)" />
-      <a-button type="primary" style="width: 120px;" @click="handleUpload">提交</a-button>
+      <a-button type="primary" style="width: 120px" @click="handleUpload" :loading="loading"
+        >提交
+      </a-button>
     </a-input-group>
     <div class="img-wrapper">
       <img v-if="picture?.url" :src="picture?.url" alt="img" />
@@ -13,7 +15,6 @@
 import { ref } from 'vue'
 import { message } from 'ant-design-vue'
 import { uploadPictureByUrlUsingPost } from '@/api/tupianxiangguanjiekou.ts'
-
 
 interface Props {
   picture: API.PictureVO
@@ -48,7 +49,6 @@ const handleUpload = async () => {
   }
   loading.value = false
 }
-
 </script>
 <style scoped>
 .url-picture-upload .img-wrapper {
