@@ -43,7 +43,7 @@
             <template #cover>
               <img
                 :alt="picture.name"
-                :src="picture.url"
+                :src="picture.thumbnailUrl ?? picture.url"
                 style="height: 180px; object-fit: cover"
               />
             </template>
@@ -53,7 +53,7 @@
                   <a-tag color="green">
                     {{ picture.category ?? '默认' }}
                   </a-tag>
-                  <a-tag v-for="tag in picture.tags"> {{ tag }} </a-tag>
+                  <a-tag v-for="tag in picture.tags"> {{ tag }}</a-tag>
                 </a-flex>
               </template>
             </a-card-meta>
