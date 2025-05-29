@@ -5,10 +5,12 @@
 import * as fileController from './fileController'
 import * as healthController from './healthController'
 import * as tupianxiangguanjiekou from './tupianxiangguanjiekou'
+import * as kongjianxiangguanjiekou from './kongjianxiangguanjiekou'
 import * as yonghuxiangguanjiekou from './yonghuxiangguanjiekou'
 export default {
   fileController,
   healthController,
   tupianxiangguanjiekou,
+  kongjianxiangguanjiekou,
   yonghuxiangguanjiekou,
 }

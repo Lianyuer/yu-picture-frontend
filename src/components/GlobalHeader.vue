@@ -83,6 +83,11 @@ const menus = [
     title: '图片管理',
   },
   {
+    key: '/admin/spaceManage',
+    label: '空间管理',
+    title: '空间管理',
+  },
+  {
     key: '/admin/userManage',
     label: '用户管理',
     title: '用户管理',

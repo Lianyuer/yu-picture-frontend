@@ -20,6 +20,14 @@ const router = createRouter({
       component: () => import('../views/user/UserRegisterPage.vue'),
     },
     {
+      path: '/admin/pictureManage',
+      name: '图片管理',
+      component: () => import('../views/admin/PictureManagePage.vue'),
+      meta: {
+        access: ACCESS_ENUM.ADMIN,
+      },
+    },
+    {
       path: '/addPicture',
       name: '创建图片',
       component: () => import('../views/picture/AddPicturePage.vue'),
@@ -36,12 +44,17 @@ const router = createRouter({
       props: true,
     },
     {
-      path: '/admin/pictureManage',
-      name: '图片管理',
-      component: () => import('../views/admin/PictureManagePage.vue'),
+      path: '/admin/spaceManage',
+      name: '空间管理',
+      component: () => import('../views/admin/SpaceManagePage.vue'),
       meta: {
         access: ACCESS_ENUM.ADMIN,
       },
+    },
+    {
+      path: '/addSpace',
+      name: '创建空间',
+      component: () => import('../views/space/AddSpacePage.vue'),
     },
     {
       path: '/admin/userManage',
