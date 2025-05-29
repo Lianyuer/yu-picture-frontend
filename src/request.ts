@@ -2,7 +2,9 @@ import axios from 'axios'
 import { message } from 'ant-design-vue'
 
 const myAxios = axios.create({
-  baseURL: 'http://localhost:8123',
+  baseURL:
+    process.env.NODE_ENV == 'development' ? 'http://localhost:8123' : 'http://www.lyu-cx.cn:8123',
+  // baseURL: 'http://localhost:8123',
   timeout: 60000,
   withCredentials: true, // 允许携带凭证
 })
