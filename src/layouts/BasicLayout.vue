@@ -5,19 +5,7 @@
         <GlobalHeader />
       </a-layout-header>
       <a-layout>
-        <a-layout-sider
-          class="sider"
-          breakpoint="lg"
-          collapsed-width="0"
-          :style="{
-            overflow: 'auto',
-            height: '100vh',
-            position: 'sticky',
-            left: 0,
-            top: 0,
-            bottom: 0,
-          }"
-        >
+        <a-layout-sider class="sider" breakpoint="lg" collapsed-width="0">
           <GlobalSide v-if="loginUserStore.loginUser?.id" />
         </a-layout-sider>
         <a-layout-content class="content">
@@ -35,8 +23,11 @@
 import GlobalHeader from '@/components/GlobalHeader.vue'
 import GlobalSide from '@/components/GlobalSide.vue'
 import { useLoginUserStore } from '@/stores/loginUserStore.ts'
+import { onMounted } from 'vue'
 
 const loginUserStore = useLoginUserStore()
+
+onMounted(() => {})
 </script>
 
 <style scoped>
@@ -50,12 +41,19 @@ const loginUserStore = useLoginUserStore()
   background-color: #fff;
   border-right: 1px solid #eee;
   margin-top: 65px;
+  overflow: auto;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
 }
 
 #basic-layout .content {
   padding: 0 50px;
   background: linear-gradient(to right, #fefefe, #fff);
   margin-top: 65px;
+  margin-left: 180px;
 }
 
 #basic-layout .footer {
@@ -65,5 +63,11 @@ const loginUserStore = useLoginUserStore()
 
 #basic-layout :deep(.ant-menu-root) {
   border: none;
+}
+
+@media (max-width: 991px) {
+  #basic-layout .content {
+    margin-left: 0;
+  }
 }
 </style>
