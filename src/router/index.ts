@@ -62,6 +62,12 @@ const router = createRouter({
       component: () => import('../views/space/MySpacePage.vue'),
     },
     {
+      path: '/space/:id',
+      name: '空间详情',
+      component: () => import('../views/space/SpaceDetailPage.vue'),
+      props: true,
+    },
+    {
       path: '/admin/userManage',
       name: '用户管理',
       component: () => import('../views/admin/UserManagePage.vue'),

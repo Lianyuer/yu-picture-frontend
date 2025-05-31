@@ -1,15 +1,18 @@
 <template>
   <div id="add-picture-page">
     <h2 style="margin-bottom: 22px">{{ route.query?.id ? '修改图片' : '创建图片' }}</h2>
+    <a-typography-paragraph v-if="spaceId" type="secondary">
+      图片保存至空间：<a :href="`/space/${spaceId}`">{{ spaceId }}</a>
+    </a-typography-paragraph>
     <!--  上传图片方式选择  -->
     <a-tabs v-model:activeKey="uploadType">
       <a-tab-pane key="file" tab="文件上传">
         <!--  图片上传组件  -->
-        <PictureUpload :picture="picture" :onSuccess="onSuccess" />
+        <PictureUpload :picture="picture" :spaceId="spaceId" :onSuccess="onSuccess" />
       </a-tab-pane>
       <a-tab-pane key="url" tab="URL 上传">
         <!--  图片 URL 上传组件  -->
-        <UrlPictureUpload :picture="picture" :onSuccess="onSuccess" />
+        <UrlPictureUpload :picture="picture" :spaceId="spaceId" :onSuccess="onSuccess" />
       </a-tab-pane>
     </a-tabs>
     <!--  图片信息表单  -->
@@ -50,9 +53,8 @@
       </a-form-item>
 
       <a-form-item>
-        <a-button block type="primary" html-type="submit">{{
-            route.query?.id ? '保存' : '创建'
-          }}
+        <a-button block type="primary" html-type="submit"
+          >{{ route.query?.id ? '保存' : '创建' }}
         </a-button>
       </a-form-item>
     </a-form>
@@ -61,11 +63,11 @@
 
 <script setup lang="ts">
 import PictureUpload from '@/components/PictureUpload.vue'
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import {
   editPictureUsingPost,
   getPictureVoByIdUsingGet,
-  listPictureTagCategoryUsingGet
+  listPictureTagCategoryUsingGet,
 } from '@/api/tupianxiangguanjiekou.ts'
 import { message } from 'ant-design-vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -74,6 +76,10 @@ import UrlPictureUpload from '@/components/UrlPictureUpload.vue'
 const picture = ref<API.PictureVO>()
 const pictureForm = reactive<API.PictureUpdateDTO>({})
 const uploadType = ref<'file' | 'url'>('file')
+// 空间 id
+const spaceId = computed(() => {
+  return route.query?.spaceId
+})
 
 /**
  * 图片上传成功
@@ -94,13 +100,13 @@ const getPictureTagCategory = async () => {
     tagOptions.value = res.data.data.tagList.map((value) => {
       return {
         value: value,
-        text: value
+        text: value,
       }
     })
     categoryOptions.value = res.data.data.categoryList.map((value) => {
       return {
         value: value,
-        text: value
+        text: value,
       }
     })
   }
@@ -118,16 +124,18 @@ const handleSubmit = async (values) => {
   }
   const res = await editPictureUsingPost({
     id: pictureId,
-    ...values
+    spaceId: spaceId.value,
+    ...values,
   })
   if (res.data.code === 0 && res.data.data) {
     if (route.query?.id) {
       message.success('修改成功')
-      router.back()
+      // router.back()
     } else {
       message.success('创建成功')
-      router.push(`/picture/${pictureId}`)
+      // router.push(`/picture/${pictureId}`)
     }
+    router.back()
   } else {
     message.error('创建失败，' + res.data.message)
   }

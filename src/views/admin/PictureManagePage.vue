@@ -4,7 +4,9 @@
       <h2>图片管理</h2>
       <a-space>
         <a-button type="primary" href="/addPicture" target="_blank">+ 创建图片</a-button>
-        <a-button type="primary" ghost href="/addPicture/batch" target="_blank">+ 批量创建图片</a-button>
+        <a-button type="primary" ghost href="/addPicture/batch" target="_blank"
+          >+ 批量创建图片</a-button
+        >
       </a-space>
     </a-flex>
     <div style="margin-bottom: 16px"></div>
@@ -142,13 +144,13 @@ import {
   deletePictureUsingPost,
   listPictureByPageUsingPost,
   listPictureTagCategoryUsingGet,
-  pictureReviewUsingPost
+  pictureReviewUsingPost,
 } from '@/api/tupianxiangguanjiekou.ts'
 import { useRouter } from 'vue-router'
 import {
   PIC_REVIEW_STATUS_ENUM,
   PIC_REVIEW_STATUS_MAP,
-  PIC_REVIEW_STATUS_OPTIONS
+  PIC_REVIEW_STATUS_OPTIONS,
 } from '../../constant/picture.ts'
 import { formatSize } from '../../utils'
 
@@ -156,52 +158,52 @@ const columns = [
   {
     title: 'id',
     dataIndex: 'id',
-    key: 'id'
+    key: 'id',
   },
   {
     title: '图片',
-    key: 'url'
+    key: 'url',
   },
   {
     title: '名称',
     dataIndex: 'name',
-    key: 'name'
+    key: 'name',
   },
   {
     title: '简介',
     key: 'introduction',
-    dataIndex: 'introduction'
+    dataIndex: 'introduction',
   },
   {
     title: '类型',
     key: 'category',
-    dataIndex: 'category'
+    dataIndex: 'category',
   },
   {
     title: '标签',
-    key: 'tags'
+    key: 'tags',
   },
   {
     title: '图片信息',
-    key: 'pictureInfo'
+    key: 'pictureInfo',
   },
   {
     title: '用户id',
     dataIndex: 'userId',
-    key: 'userId'
+    key: 'userId',
   },
   {
     title: '审核信息',
-    key: 'reviewMessage'
+    key: 'reviewMessage',
   },
   {
     title: '创建时间',
-    key: 'createTime'
+    key: 'createTime',
   },
   {
     title: '操作',
-    key: 'action'
-  }
+    key: 'action',
+  },
 ]
 
 // 数据
@@ -220,7 +222,7 @@ const searchParams = reactive<API.PictureQueryDTO>({
   size: 10,
   searchText: '',
   category: '',
-  tags: []
+  tags: [],
 })
 
 // 监听搜索条件数据变化
@@ -240,13 +242,13 @@ const getPictureTagCategory = async () => {
     tagOptions.value = res.data.data.tagList.map((value) => {
       return {
         value: value,
-        text: value
+        text: value,
       }
     })
     categoryOptions.value = res.data.data.categoryList.map((value) => {
       return {
         value: value,
-        text: value
+        text: value,
       }
     })
   }
@@ -264,7 +266,7 @@ const handleReview = async (record: API.Picture, reviewStatus: number) => {
   const res = await pictureReviewUsingPost({
     id: record.id,
     reviewStatus,
-    reviewMessage
+    reviewMessage,
   })
   if (res.data.code === 0 && res.data.data) {
     message.success('审核操作成功')
@@ -298,7 +300,7 @@ const pagination = computed(() => ({
   current: searchParams.current ?? 1,
   pageSize: searchParams.size ?? 10,
   showSizeChanger: true,
-  showTotal: (total: number) => `共${total}条`
+  showTotal: (total: number) => `共${total}条`,
 }))
 
 // 表格变化处理
@@ -311,7 +313,8 @@ const doTableChange = (page: any) => {
 // 获取数据
 const fetchData = async () => {
   const res = await listPictureByPageUsingPost({
-    ...searchParams
+    ...searchParams,
+    nullSpaceId: true,
   })
   if (res.data.data) {
     dataList.value = res.data.data.records ?? []
