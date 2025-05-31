@@ -11,6 +11,12 @@ declare namespace API {
     message?: string
   }
 
+  type BaseResponseListSpaceLevel_ = {
+    code?: number
+    data?: SpaceLevel[]
+    message?: string
+  }
+
   type BaseResponseLoginUserVO_ = {
     code?: number
     data?: LoginUserVO
@@ -201,6 +207,7 @@ declare namespace API {
     id?: number
     introduction?: string
     name?: string
+    nullSpaceId?: boolean
     picFormat?: string
     picHeight?: number
     picScale?: number
@@ -214,6 +221,7 @@ declare namespace API {
     size?: number
     sortField?: string
     sortOrder?: string
+    spaceId?: number
     tags?: string[]
     updateTime?: string
     userId?: number
@@ -248,6 +256,7 @@ declare namespace API {
     fileUrl?: string
     id?: number
     picName?: string
+    spaceId?: number
   }
 
   type PictureVO = {
@@ -266,6 +275,7 @@ declare namespace API {
     reviewStatus?: number
     reviewTime?: string
     reviewerId?: number
+    spaceId?: number
     tags?: string[]
     thumbnailUrl?: string
     updateTime?: string
@@ -299,13 +309,20 @@ declare namespace API {
     spaceName?: string
   }
 
+  type SpaceLevel = {
+    maxCount?: number
+    maxSize?: number
+    text?: string
+    value?: number
+  }
+
   type SpaceQueryDTO = {
     current?: number
     id?: number
     size?: number
     sortField?: string
     sortOrder?: string
-    spaceLevel?: number | null
+    spaceLevel?: number
     spaceName?: string
     userId?: number
   }
@@ -342,6 +359,7 @@ declare namespace API {
     fileUrl?: string
     id?: number
     picName?: string
+    spaceId?: number
   }
 
   type User = {

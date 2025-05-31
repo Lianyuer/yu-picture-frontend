@@ -10,6 +10,7 @@
       >
         <a-input v-model:value="spaceForm.spaceName" placeholder="请输入空间名称" allow-clear />
       </a-form-item>
+      <div style="margin-bottom: 40px" />
       <a-form-item
         label="空间级别"
         name="spaceLevel"
@@ -23,13 +24,23 @@
           allow-clear
         />
       </a-form-item>
-
+      <div style="margin-bottom: 40px" />
       <a-form-item>
         <a-button block type="primary" html-type="submit"
           >{{ route.query?.id ? '保存' : '创建' }}
         </a-button>
       </a-form-item>
     </a-form>
+    <a-card title="空间级别介绍">
+      <a-typography-paragraph>
+        * 目前仅支持开通普通版，如需升级空间，请联系
+        <a href="https://github.com/Lianyuer?tab=projects" target="_blank">管理员</a>
+      </a-typography-paragraph>
+      <a-typography-paragraph v-for="spaceLevel in spaceLevelList">
+        {{ spaceLevel.text }}：大小 {{ formatSize(spaceLevel.maxSize) }}，数量
+        {{ spaceLevel.maxCount }}
+      </a-typography-paragraph>
+    </a-card>
   </div>
 </template>
 
@@ -40,14 +51,16 @@ import { message } from 'ant-design-vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
   addSpaceUsingPost,
-  editSpaceUsingPost,
   getSpaceVoByIdUsingGet,
+  listSpaceLevelUsingGet,
   updateSpaceUsingPost,
 } from '@/api/kongjianxiangguanjiekou.ts'
 import { SPACE_LEVEL_OPTIONS } from '@/constant/space.ts'
+import { formatSize } from '../../utils'
 
 const oldSpace = ref<API.SpaceVO>()
 const spaceForm = reactive<API.SpaceAddDTO | API.SpaceEditDTO>({})
+const spaceLevelList = ref<API.SpaceLevel[]>()
 
 const router = useRouter()
 
@@ -55,7 +68,6 @@ const router = useRouter()
  * 表单提交
  */
 const handleSubmit = async (values) => {
-  console.log('values', values)
   const spaceId = oldSpace.value?.id
   let res
   // 新增
@@ -97,8 +109,19 @@ const getOldSpace = async () => {
   }
 }
 
+// 获取空间级别列表
+const getSpaceLevel = async () => {
+  const res = await listSpaceLevelUsingGet()
+  if (res.data.code == 0 && res.data.data) {
+    spaceLevelList.value = res.data.data
+  } else {
+    message.error('获取空间级别列表失败' + res.data.message)
+  }
+}
+
 onMounted(() => {
   getOldSpace()
+  getSpaceLevel()
 })
 </script>
 

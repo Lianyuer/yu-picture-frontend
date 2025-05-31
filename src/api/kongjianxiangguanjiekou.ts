@@ -71,6 +71,14 @@ export async function getSpaceVoByIdUsingGet(
   })
 }
 
+/** 获取空间级别对象列表接口 GET /api/space/list/level */
+export async function listSpaceLevelUsingGet(options?: { [key: string]: any }) {
+  return request<API.BaseResponseListSpaceLevel_>('/api/space/list/level', {
+    method: 'GET',
+    ...(options || {}),
+  })
+}
+
 /** 管理员分页查询空间列表接口 POST /api/space/list/page */
 export async function listSpaceByPageUsingPost(
   body: API.SpaceQueryDTO,
