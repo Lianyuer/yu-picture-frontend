@@ -4,30 +4,50 @@
       <a-layout-header class="header">
         <GlobalHeader />
       </a-layout-header>
-      <a-layout-content class="content">
-        <div :style="{ background: '#fff', padding: '24px', minHeight: '280px' }">
-          <router-view />
-        </div>
-      </a-layout-content>
-      <a-layout-footer class="footer"> 智能协同云图库 ©2025 Created by lian </a-layout-footer>
+      <a-layout>
+        <GlobalSide class="sider" v-if="loginUserStore.loginUser?.id" />
+        <a-layout-content class="content">
+          <div :style="{ background: '#fff', padding: '24px', minHeight: '280px' }">
+            <router-view />
+          </div>
+        </a-layout-content>
+      </a-layout>
+      <a-layout-footer class="footer"> 智能协同云图库 ©2025 Created by lian</a-layout-footer>
     </a-layout>
   </div>
 </template>
+
 <script lang="ts" setup>
 import GlobalHeader from '@/components/GlobalHeader.vue'
+import GlobalSide from '@/components/GlobalSide.vue'
+import { useLoginUserStore } from '@/stores/loginUserStore.ts'
+
+const loginUserStore = useLoginUserStore()
 </script>
+
 <style scoped>
 #basic-layout .header {
   background-color: #fff;
-  margin-bottom: 20px;
+  margin-bottom: 1px;
   padding-inline: 25px;
 }
+
+#basic-layout .sider {
+  background-color: #fff;
+  border-right: 1px solid #eee;
+}
+
 #basic-layout .content {
   padding: 0 50px;
   background: linear-gradient(to right, #fefefe, #fff);
 }
+
 #basic-layout .footer {
   text-align: center;
   background-color: #efefef;
+}
+
+#basic-layout :deep(.ant-menu-root) {
+  border: none;
 }
 </style>

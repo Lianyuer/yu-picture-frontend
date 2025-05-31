@@ -39,6 +39,12 @@
           </a>
           <template #overlay>
             <a-menu @click="doDropMenuClick">
+              <a-menu-item key="myspace">
+                <router-link to="/mySpace">
+                  <UserOutlined />
+                  我的空间
+                </router-link>
+              </a-menu-item>
               <a-menu-item key="logout">
                 <a target="_self" rel="noopener noreferrer" href="javascript:void(0)">
                   <LogoutOutlined />
@@ -60,7 +66,7 @@
 <script lang="ts" setup>
 import { computed, h, ref } from 'vue'
 import { HomeOutlined, DownOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons-vue'
-import { MenuProps, message } from 'ant-design-vue'
+import { message } from 'ant-design-vue'
 import { useRouter } from 'vue-router'
 import { useLoginUserStore } from '@/stores/loginUserStore.ts'
 import { userLogoutUsingPost } from '@/api/yonghuxiangguanjiekou.ts'
