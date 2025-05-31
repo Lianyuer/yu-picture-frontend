@@ -7,10 +7,12 @@
       <a-layout>
         <a-layout-sider
           class="sider"
+          breakpoint="lg"
+          collapsed-width="0"
           :style="{
             overflow: 'auto',
             height: '100vh',
-            position: 'fixed',
+            position: 'sticky',
             left: 0,
             top: 0,
             bottom: 0,
@@ -53,7 +55,6 @@ const loginUserStore = useLoginUserStore()
 #basic-layout .content {
   padding: 0 50px;
   background: linear-gradient(to right, #fefefe, #fff);
-  margin-left: 200px;
   margin-top: 65px;
 }
 
