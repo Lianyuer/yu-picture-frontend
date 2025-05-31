@@ -63,6 +63,8 @@ const selectedTags = ref<string[]>([])
 
 // 搜索
 const onSearch = () => {
+  // 搜索时页数重置为 1，否则可能搜索不到图片
+  searchParams.current = 1
   fetchData()
 }
 
