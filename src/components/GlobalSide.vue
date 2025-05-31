@@ -1,6 +1,6 @@
 <template>
   <div id="global-side">
-    <a-layout-sider class="sider" width="200" breakpoint="lg" collapsed-width="0">
+    <a-layout-sider width="200" breakpoint="lg" collapsed-width="0">
       <a-menu
         mode="inline"
         v-model:selectedKeys="current"

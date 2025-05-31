@@ -1,11 +1,23 @@
 <template>
   <div id="basic-layout">
     <a-layout class="layout" style="min-height: 100vh">
-      <a-layout-header class="header">
+      <a-layout-header class="header" :style="{ position: 'fixed', zIndex: 1, width: '100%' }">
         <GlobalHeader />
       </a-layout-header>
       <a-layout>
-        <GlobalSide class="sider" v-if="loginUserStore.loginUser?.id" />
+        <a-layout-sider
+          class="sider"
+          :style="{
+            overflow: 'auto',
+            height: '100vh',
+            position: 'fixed',
+            left: 0,
+            top: 0,
+            bottom: 0,
+          }"
+        >
+          <GlobalSide v-if="loginUserStore.loginUser?.id" />
+        </a-layout-sider>
         <a-layout-content class="content">
           <div :style="{ background: '#fff', padding: '24px', minHeight: '280px' }">
             <router-view />
@@ -35,11 +47,14 @@ const loginUserStore = useLoginUserStore()
 #basic-layout .sider {
   background-color: #fff;
   border-right: 1px solid #eee;
+  margin-top: 65px;
 }
 
 #basic-layout .content {
   padding: 0 50px;
   background: linear-gradient(to right, #fefefe, #fff);
+  margin-left: 200px;
+  margin-top: 65px;
 }
 
 #basic-layout .footer {
