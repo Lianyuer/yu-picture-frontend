@@ -1,5 +1,7 @@
 <template>
   <div id="space-detail-page">
+    <!--  搜索表单组件  -->
+    <PictureSearchForm :onSearch="onSearch" />
     <!-- 空间信息 -->
     <a-flex justify="space-between" align="center" style="margin-bottom: 22px">
       <h2 style="margin-bottom: 0">{{ space.spaceName }}（私有空间）</h2>
@@ -36,6 +38,7 @@ import { message } from 'ant-design-vue'
 import { getSpaceVoByIdUsingGet } from '@/api/kongjianxiangguanjiekou.ts'
 import PictureList from '@/components/PictureList.vue'
 import { formatSize } from '@/utils'
+import PictureSearchForm from '@/components/PictureSearchForm.vue'
 
 // 定义数据
 const loading = ref(true)
@@ -70,7 +73,7 @@ const dataList = ref<API.PictureVO[]>([])
 const total = ref()
 
 // 搜索条件
-const searchParams = reactive<API.PictureQueryDTO>({
+const searchParams = ref<API.PictureQueryDTO>({
   current: 1,
   size: 12,
   sortField: 'create_time',
@@ -79,8 +82,18 @@ const searchParams = reactive<API.PictureQueryDTO>({
 
 // 分页事件
 const onPageChange = (page: number, pageSize: number) => {
-  searchParams.current = page
-  searchParams.size = pageSize
+  searchParams.value.current = page
+  searchParams.value.size = pageSize
+  fetchData()
+}
+
+// 搜索
+const onSearch = (newSearchParams: API.PictureUpdateDTO) => {
+  searchParams.value = {
+    ...searchParams.value,
+    ...newSearchParams,
+    current: 1,
+  }
   fetchData()
 }
 
@@ -90,7 +103,7 @@ const fetchData = async () => {
   // 转换搜索参数
   const params = {
     spaceId: props.id,
-    ...searchParams,
+    ...searchParams.value,
   }
 
   const res = await listPictureVoByPageUsingPost(params)
@@ -115,6 +128,8 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/*
+
 #space-detail-page {
   height: 800px;
 }
@@ -122,4 +137,6 @@ onMounted(() => {
 #space-detail-page .picture-list {
   height: 710px;
 }
+
+*/
 </style>

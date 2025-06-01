@@ -204,6 +204,7 @@ declare namespace API {
     createTime?: string
     current?: number
     editTime?: string
+    endEditTime?: string
     id?: number
     introduction?: string
     name?: string
@@ -222,6 +223,7 @@ declare namespace API {
     sortField?: string
     sortOrder?: string
     spaceId?: number
+    startEditTime?: string
     tags?: string[]
     updateTime?: string
     userId?: number
