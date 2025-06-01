@@ -8,7 +8,7 @@
         <a-tooltip :title="`${formatSize(space.totalSize)} / ${formatSize(space.maxSize)}`">
           <a-progress
             type="circle"
-            :percent="(space.totalSize / space.maxSize).toFixed(1)"
+            :percent="((space.totalSize / space.maxSize) * 100).toFixed(1)"
             :size="42"
           />
         </a-tooltip>
