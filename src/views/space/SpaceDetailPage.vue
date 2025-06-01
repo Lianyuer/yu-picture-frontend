@@ -16,14 +16,23 @@
     </a-flex>
     <!--  图片列表  -->
     <PictureList :dataList="dataList" :loading="loading" :showOp="true" :onReload="onReload" />
+    <div style="display: flex; justify-content: end; align-items: center">
+      <div style="text-align: right">图片总数 {{ space.totalCount }} / {{ space.maxCount }}</div>
+      <a-pagination
+        style="text-align: right"
+        v-model:current="searchParams.current"
+        v-model:pageSize="searchParams.size"
+        :total="total"
+        @change="onPageChange"
+      />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { onMounted, reactive, ref, watch } from 'vue'
 import { listPictureVoByPageUsingPost } from '@/api/tupianxiangguanjiekou.ts'
 import { message } from 'ant-design-vue'
-import { useRouter } from 'vue-router'
 import { getSpaceVoByIdUsingGet } from '@/api/kongjianxiangguanjiekou.ts'
 import PictureList from '@/components/PictureList.vue'
 import { formatSize } from '@/utils'
@@ -106,7 +115,11 @@ onMounted(() => {
 </script>
 
 <style scoped>
-#picture-detail-page :deep(.ant-card-body) {
-  height: 430px;
+#space-detail-page {
+  height: 800px;
+}
+
+#space-detail-page .picture-list {
+  height: 710px;
 }
 </style>
