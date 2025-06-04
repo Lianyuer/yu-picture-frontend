@@ -161,7 +161,7 @@ const rangePresets = ref([
  * @param dateStrings
  */
 const onRangeChange = (dates: any[], dateStrings: string[]) => {
-  if (dates.length < 2) {
+  if (dates?.length < 2 || dates == null) {
     searchParams.startEditTime = undefined
     searchParams.endEditTime = undefined
   } else {
