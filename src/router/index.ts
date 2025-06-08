@@ -68,6 +68,11 @@ const router = createRouter({
       props: true,
     },
     {
+      path: '/pictureSearch',
+      name: '图片搜索',
+      component: () => import('../views/picture/SearchPicturePage.vue'),
+    },
+    {
       path: '/admin/userManage',
       name: '用户管理',
       component: () => import('../views/admin/UserManagePage.vue'),
