@@ -122,6 +122,21 @@ export async function pictureReviewUsingPost(
   })
 }
 
+/** 根据颜色查询图片接口 POST /api/picture/search/color */
+export async function searchPictureByColorUsingPost(
+  body: API.SearchPictureByColorDTO,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseListPictureVO_>('/api/picture/search/color', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  })
+}
+
 /** 以图搜图接口 POST /api/picture/search/picture */
 export async function searchPictureByPictureUsingPost(
   body: API.SearchPictureByPictureDTO,
