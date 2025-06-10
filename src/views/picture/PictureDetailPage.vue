@@ -60,6 +60,14 @@
               >
                 免费下载
               </a-button>
+              <a-button
+                :icon="h(ShareAltOutlined)"
+                type="primary"
+                ghost
+                @click="doShare(picture)"
+              >
+                分享
+              </a-button>
               <a-space class="editOrDel" v-if="canEdit">
                 <a-button @click="doEdit" :icon="h(EditOutlined)">编辑</a-button>
                 <a-button danger :icon="h(DeleteOutlined)" @click="doDelete">删除</a-button>
@@ -68,6 +76,7 @@
           </a-card>
         </a-col>
       </a-row>
+      <ShareModal ref="shareModalRef" :link="shareLink" :icon="shareIcon" :name="picName" />
     </a-spin>
   </div>
 </template>
@@ -80,7 +89,8 @@ import { useRoute, useRouter } from 'vue-router'
 import { downloadImage, formatSize, toHexColor } from '@/utils'
 import { useLoginUserStore } from '@/stores/loginUserStore.ts'
 import { h } from 'vue'
-import { DownloadOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons-vue'
+import { DownloadOutlined, EditOutlined, DeleteOutlined, ShareAltOutlined } from '@ant-design/icons-vue'
+import ShareModal from '@/components/ShareModal.vue'
 
 // 定义数据
 const loading = ref(true)
@@ -104,6 +114,25 @@ const fetchData = async () => {
     message.error('数据获取失败,' + res.data.message)
   }
   loading.value = false
+}
+
+// 分享弹窗引用
+const shareModalRef = ref()
+// 分享链接
+const shareLink = ref<string>()
+// 分享图 icon
+const shareIcon = ref<string>()
+// 图片名称
+const picName = ref<string>()
+
+// 分享
+const doShare = (picture: API.PictureVO) => {
+  shareLink.value = `${window.location.protocol}//${window.location.host}/picture/${picture.id}`
+  shareIcon.value = picture.thumbnailUrl
+  picName.value = picture.name
+  if (shareModalRef.value) {
+    shareModalRef.value.showModal()
+  }
 }
 
 const loginUserStore = useLoginUserStore()
