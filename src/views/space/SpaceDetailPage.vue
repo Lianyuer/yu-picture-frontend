@@ -11,6 +11,7 @@
       <h2 style="margin-bottom: 0">{{ space.spaceName }}（私有空间）</h2>
       <a-space size="middle">
         <a-button type="primary" :href="`/addPicture?spaceId=${props.id}`">+ 创建图片</a-button>
+        <a-button :icon="h(EditOutlined)" @click="doBatchEdit">批量编辑</a-button>
         <a-tooltip :title="`${formatSize(space.totalSize)} / ${formatSize(space.maxSize)}`">
           <a-progress
             type="circle"
@@ -32,12 +33,21 @@
         @change="onPageChange"
       />
     </div>
+    <PictureBatchEditModal
+      ref="pictureBatchEditModalRef"
+      :spaceId="space.id"
+      :pictureList="dataList"
+      :onSuccess="onBatchEditPicturesSuccess"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { listPictureVoByPageUsingPost, searchPictureByColorUsingPost } from '@/api/tupianxiangguanjiekou.ts'
+import {
+  listPictureVoByPageUsingPost,
+  searchPictureByColorUsingPost,
+} from '@/api/tupianxiangguanjiekou.ts'
 import { message } from 'ant-design-vue'
 import { getSpaceVoByIdUsingGet } from '@/api/kongjianxiangguanjiekou.ts'
 import PictureList from '@/components/PictureList.vue'
@@ -45,6 +55,9 @@ import { formatSize } from '@/utils'
 import PictureSearchForm from '@/components/PictureSearchForm.vue'
 import { ColorPicker } from 'vue3-colorpicker'
 import 'vue3-colorpicker/style.css'
+import { EditOutlined } from '@ant-design/icons-vue'
+import { h } from 'vue'
+import PictureBatchEditModal from '@/components/PictureBatchEditModal.vue'
 
 // 定义数据
 const loading = ref(true)
@@ -61,7 +74,7 @@ const fetchSpaceDetail = async () => {
   loading.value = true
   try {
     const res = await getSpaceVoByIdUsingGet({
-      id: props.id
+      id: props.id,
     })
     if (res.data.code === 0 && res.data.data) {
       space.value = res.data.data
@@ -83,7 +96,7 @@ const searchParams = ref<API.PictureQueryDTO>({
   current: 1,
   size: 12,
   sortField: 'create_time',
-  sortOrder: 'descend'
+  sortOrder: 'descend',
 })
 
 // 分页事件
@@ -98,7 +111,7 @@ const onSearch = (newSearchParams: API.PictureUpdateDTO) => {
   searchParams.value = {
     ...searchParams.value,
     ...newSearchParams,
-    current: 1
+    current: 1,
   }
   fetchData()
 }
@@ -109,7 +122,7 @@ const fetchData = async () => {
   // 转换搜索参数
   const params = {
     spaceId: props.id,
-    ...searchParams.value
+    ...searchParams.value,
   }
 
   const res = await listPictureVoByPageUsingPost(params)
@@ -134,14 +147,27 @@ const onColorChange = async (color: string) => {
     spaceId: props.id,
   })
   if (res.data.code === 0 && res.data.data) {
-    const data = res.data.data ?? [];
-    dataList.value = data;
-    total.value = data.length;
+    const data = res.data.data ?? []
+    dataList.value = data
+    total.value = data.length
   } else {
     message.error('获取数据失败，' + res.data.message)
   }
 }
 
+const pictureBatchEditModalRef = ref()
+
+// 弹出批量编辑图片弹框
+const doBatchEdit = () => {
+  if (pictureBatchEditModalRef.value) {
+    pictureBatchEditModalRef.value.showModal()
+  }
+}
+
+// 批量编辑成功后刷新数据
+const onBatchEditPicturesSuccess = () => {
+  fetchData()
+}
 
 onMounted(() => {
   fetchSpaceDetail()
