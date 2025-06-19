@@ -15,6 +15,17 @@
         <UrlPictureUpload :picture="picture" :spaceId="spaceId" :onSuccess="onSuccess" />
       </a-tab-pane>
     </a-tabs>
+    <!--  图片裁剪  -->
+    <div style="text-align: center; margin: 16px 0 24px">
+      <a-button type="primary" ghost @click="doCrop">编辑图片</a-button>
+    </div>
+    <ImageCropper
+      ref="imageCropRef"
+      :imageUrl="picture?.url"
+      :picture="picture"
+      :spaceId="spaceId"
+      :onSuccess="onCropSuccess"
+    />
     <!--  图片信息表单  -->
     <a-form
       v-if="picture"
@@ -72,6 +83,7 @@ import {
 import { message } from 'ant-design-vue'
 import { useRoute, useRouter } from 'vue-router'
 import UrlPictureUpload from '@/components/UrlPictureUpload.vue'
+import ImageCropper from '@/components/ImageCropper.vue'
 
 const picture = ref<API.PictureVO>()
 const pictureForm = reactive<API.PictureUpdateDTO>({})
@@ -110,6 +122,16 @@ const getPictureTagCategory = async () => {
       }
     })
   }
+}
+
+const imageCropRef = ref()
+
+const doCrop = () => {
+  imageCropRef.value.openModal()
+}
+
+const onCropSuccess = (newPicture: API.PictureVO) => {
+  picture.value = newPicture
 }
 
 const router = useRouter()
