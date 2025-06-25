@@ -15,10 +15,15 @@
         <UrlPictureUpload :picture="picture" :spaceId="spaceId" :onSuccess="onSuccess" />
       </a-tab-pane>
     </a-tabs>
+    <div style="margin-bottom: 16px" />
     <!--  图片裁剪  -->
-    <div style="text-align: center; margin: 16px 0 24px">
+    <a-flex justify="center" gap="16" v-if="picture">
       <a-button type="primary" ghost @click="doCrop">编辑图片</a-button>
-    </div>
+      <a-button type="primary" @click="doOutPainting" v-if="loginUser.userRole == 'admin'"
+        >AI 扩图</a-button
+      >
+    </a-flex>
+    <div style="margin-bottom: 24px" />
     <ImageCropper
       ref="imageCropRef"
       :imageUrl="picture?.url"
@@ -26,6 +31,7 @@
       :spaceId="spaceId"
       :onSuccess="onCropSuccess"
     />
+    <ImageOutPainting ref="imageOutPaintingRef" :picture="picture" :onSuccess="onSuccess" />
     <!--  图片信息表单  -->
     <a-form
       v-if="picture"
@@ -84,6 +90,11 @@ import { message } from 'ant-design-vue'
 import { useRoute, useRouter } from 'vue-router'
 import UrlPictureUpload from '@/components/UrlPictureUpload.vue'
 import ImageCropper from '@/components/ImageCropper.vue'
+import ImageOutPainting from '@/components/ImageOutPainting.vue'
+import { useLoginUserStore } from '@/stores/loginUserStore.ts'
+
+const loginUserStore = useLoginUserStore()
+const loginUser = loginUserStore.loginUser
 
 const picture = ref<API.PictureVO>()
 const pictureForm = reactive<API.PictureUpdateDTO>({})
@@ -131,6 +142,16 @@ const doCrop = () => {
 }
 
 const onCropSuccess = (newPicture: API.PictureVO) => {
+  picture.value = newPicture
+}
+
+const imageOutPaintingRef = ref()
+
+const doOutPainting = () => {
+  imageOutPaintingRef.value.openModal()
+}
+
+const onOutPaintingSuccess = (newPicture: API.PictureVO) => {
   picture.value = newPicture
 }
 

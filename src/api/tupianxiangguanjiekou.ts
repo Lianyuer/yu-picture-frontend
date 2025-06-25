@@ -122,6 +122,42 @@ export async function listPictureVoByPageWithCacheUsingPost(
   })
 }
 
+/** 创建 AI 扩图任务接口 POST /api/picture/out_painting/create_task */
+export async function createPictureOutPaintingTaskUsingPost(
+  body: API.CreatePictureOutPaintingTaskRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseCreateOutPaintingTaskResponse_>(
+    '/api/picture/out_painting/create_task',
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data: body,
+      ...(options || {}),
+    }
+  )
+}
+
+/** 查询 AI 扩图任务接口 GET /api/picture/out_painting/get_task */
+export async function getPictureOutPaintingTaskUsingGet(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.getPictureOutPaintingTaskUsingGETParams,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseGetOutPaintingTaskResponse_>(
+    '/api/picture/out_painting/get_task',
+    {
+      method: 'GET',
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    }
+  )
+}
+
 /** 图片审核接口 POST /api/picture/review */
 export async function pictureReviewUsingPost(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
