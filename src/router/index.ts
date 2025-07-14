@@ -81,6 +81,11 @@ const router = createRouter({
       },
     },
     {
+      path: '/spaceAnalyze',
+      name: '空间分析',
+      component: () => import('../views/space/SpaceAnalyzePage.vue'),
+    },
+    {
       path: '/noAuth',
       name: '无权限',
       component: () => import('../views/NoAuthView.vue'),
