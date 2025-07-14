@@ -1,12 +1,29 @@
 <template>
   <div id="space-usage-analyze">
     <h3 style="color: gray">空间资源使用分析</h3>
-    <a-card title="空间大小使用占比">
-      <a-progress type="dashboard" :percent="75" />
-    </a-card>
-    <a-card title="图片数量使用占比">
-      <a-progress type="dashboard" :percent="75" />
-    </a-card>
+    <a-row :gutter="[16, 16]">
+      <a-col :xs="24" :md="12">
+        <a-card hoverable title="存储空间">
+          <h3 style="text-align: center">
+            {{ formatSize(data?.usedSize) }} /
+            {{ !props.queryPublic ? formatSize(data?.maxSize) : '无限制' }}
+          </h3>
+          <div>
+            <a-progress type="dashboard" :percent="data?.sizeUsageRatio" />
+          </div>
+        </a-card>
+      </a-col>
+      <a-col :xs="24" :md="12">
+        <a-card hoverable title="图片数量">
+          <h3 style="text-align: center">
+            {{ data?.usedCount }} / {{ !props.queryPublic ? data?.maxCount : '无限制' }}
+          </h3>
+          <div>
+            <a-progress type="dashboard" :percent="data?.countUsageRatio" />
+          </div>
+        </a-card>
+      </a-col>
+    </a-row>
   </div>
 </template>
 
@@ -14,6 +31,7 @@
 import { onMounted, ref } from 'vue'
 import { getSpaceUsageAnalyzeUsingGet } from '@/api/kongjianfenxixiangguanjiekou.ts'
 import { message } from 'ant-design-vue'
+import { formatSize } from '../../utils'
 
 const loading = ref<boolean>(false)
 const data = ref<API.SpaceUsageAnalyzeResponse>()
@@ -27,7 +45,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   queryPublic: false,
   queryAll: false,
-  spaceId: '1928091473354952706',
+  spaceId: '1930841865823748098',
 })
 
 // 获取图片数据
@@ -52,4 +70,12 @@ onMounted(() => {
 })
 </script>
 
-<style scoped></style>
+<style scoped>
+#space-usage-analyze {
+  margin-bottom: 16px;
+}
+
+#space-usage-analyze .ant-card-body div {
+  text-align: center;
+}
+</style>
