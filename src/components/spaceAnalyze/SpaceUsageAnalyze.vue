@@ -6,7 +6,7 @@
         <a-card hoverable title="存储空间">
           <h3 style="text-align: center">
             {{ formatSize(data?.usedSize) }} /
-            {{ !props.queryPublic ? formatSize(data?.maxSize) : '无限制' }}
+            {{ data?.maxSize ? formatSize(data?.maxSize) : '无限制' }}
           </h3>
           <div>
             <a-progress type="dashboard" :percent="data?.sizeUsageRatio" />
@@ -16,7 +16,7 @@
       <a-col :xs="24" :md="12">
         <a-card hoverable title="图片数量">
           <h3 style="text-align: center">
-            {{ data?.usedCount }} / {{ !props.queryPublic ? data?.maxCount : '无限制' }}
+            {{ data?.usedCount }} / {{ data?.maxCount ? data?.maxCount : '无限制' }}
           </h3>
           <div>
             <a-progress type="dashboard" :percent="data?.countUsageRatio" />
@@ -43,9 +43,9 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  queryPublic: false,
+  queryPublic: true,
   queryAll: false,
-  spaceId: '1930841865823748098',
+  spaceId: '1928091473354952706',
 })
 
 // 获取图片数据
