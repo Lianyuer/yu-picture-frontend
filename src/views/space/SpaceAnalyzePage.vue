@@ -5,6 +5,7 @@
     <SpaceCategoryAnalyze />
     <SpaceTagAnalyze />
     <SpaceSizeAnalyze />
+    <SpaceUserAnalyze />
   </div>
 </template>
 
@@ -13,6 +14,7 @@ import SpaceUsageAnalyze from '@/components/spaceAnalyze/SpaceUsageAnalyze.vue'
 import SpaceCategoryAnalyze from '@/components/spaceAnalyze/SpaceCategoryAnalyze.vue'
 import SpaceTagAnalyze from '@/components/spaceAnalyze/SpaceTagAnalyze.vue'
 import SpaceSizeAnalyze from '@/components/spaceAnalyze/SpaceSizeAnalyze.vue'
+import SpaceUserAnalyze from '@/components/spaceAnalyze/SpaceUserAnalyze.vue'
 </script>
 
 <style scoped></style>
