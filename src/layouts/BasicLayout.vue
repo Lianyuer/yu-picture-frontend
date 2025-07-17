@@ -5,10 +5,15 @@
         <GlobalHeader />
       </a-layout-header>
       <a-layout>
-        <a-layout-sider class="sider" breakpoint="lg" collapsed-width="0">
-          <GlobalSide v-if="loginUserStore.loginUser?.id" />
+        <a-layout-sider
+          v-if="loginUserStore.loginUser?.id"
+          class="sider"
+          breakpoint="lg"
+          collapsed-width="0"
+        >
+          <GlobalSide />
         </a-layout-sider>
-        <a-layout-content class="content">
+        <a-layout-content class="content" :style="loginUserStore.loginUser?.id ?? 'margin-left:0'">
           <div :style="{ background: '#fff', padding: '24px', minHeight: '280px' }">
             <router-view />
           </div>
