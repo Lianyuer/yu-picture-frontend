@@ -11,6 +11,14 @@
       <h2 style="margin-bottom: 0">{{ space.spaceName }}（私有空间）</h2>
       <a-space size="middle">
         <a-button type="primary" :href="`/addPicture?spaceId=${props.id}`">+ 创建图片</a-button>
+        <a-button
+          :icon="h(BarChartOutlined)"
+          type="primary"
+          ghost
+          :href="`/spaceAnalyze?spaceId=${props.id}`"
+          target="_blank"
+          >空间分析</a-button
+        >
         <a-button :icon="h(EditOutlined)" @click="doBatchEdit">批量编辑</a-button>
         <a-tooltip :title="`${formatSize(space.totalSize)} / ${formatSize(space.maxSize)}`">
           <a-progress
@@ -55,7 +63,7 @@ import { formatSize } from '@/utils'
 import PictureSearchForm from '@/components/PictureSearchForm.vue'
 import { ColorPicker } from 'vue3-colorpicker'
 import 'vue3-colorpicker/style.css'
-import { EditOutlined } from '@ant-design/icons-vue'
+import { EditOutlined, BarChartOutlined } from '@ant-design/icons-vue'
 import { h } from 'vue'
 import PictureBatchEditModal from '@/components/PictureBatchEditModal.vue'
 

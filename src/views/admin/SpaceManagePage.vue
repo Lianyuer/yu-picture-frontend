@@ -4,6 +4,12 @@
       <h2>空间管理</h2>
       <a-space>
         <a-button type="primary" href="/addSpace" target="_blank">+ 创建空间</a-button>
+        <a-button type="primary" ghost href="/spaceAnalyze?queryPublic=1" target="_blank"
+          >分析公共图库</a-button
+        >
+        <a-button type="primary" ghost href="/spaceAnalyze?queryAll=1" target="_blank"
+          >分析全空间</a-button
+        >
       </a-space>
     </a-flex>
     <div style="margin-bottom: 16px"></div>
@@ -82,6 +88,8 @@
         <template v-else-if="column.key === 'action'">
           <span>
             <span>
+              <a type="link" :href="`/spaceAnalyze?spaceId=${record.id}`" target="_blank">分析</a>
+              <a-divider type="vertical" />
               <a @click="edit(record.id)">编辑</a>
               <a-divider type="vertical" />
             </span>

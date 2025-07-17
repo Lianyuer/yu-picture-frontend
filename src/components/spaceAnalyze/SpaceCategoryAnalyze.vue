@@ -32,9 +32,9 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  queryPublic: true,
+  queryPublic: false,
   queryAll: false,
-  spaceId: '1930841865823748098',
+  spaceId: '',
 })
 
 // 获取图片数据

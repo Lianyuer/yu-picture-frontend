@@ -60,7 +60,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   queryPublic: false,
-  queryAll: true,
+  queryAll: false,
   spaceId: '',
 })
 
