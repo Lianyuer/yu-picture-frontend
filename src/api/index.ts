@@ -7,6 +7,7 @@ import * as healthController from './healthController'
 import * as tupianxiangguanjiekou from './tupianxiangguanjiekou'
 import * as kongjianxiangguanjiekou from './kongjianxiangguanjiekou'
 import * as kongjianfenxixiangguanjiekou from './kongjianfenxixiangguanjiekou'
+import * as kongjianchengyuanxiangguanjiekou from './kongjianchengyuanxiangguanjiekou'
 import * as yonghuxiangguanjiekou from './yonghuxiangguanjiekou'
 export default {
   fileController,
@@ -14,5 +15,6 @@ export default {
   tupianxiangguanjiekou,
   kongjianxiangguanjiekou,
   kongjianfenxixiangguanjiekou,
+  kongjianchengyuanxiangguanjiekou,
   yonghuxiangguanjiekou,
 }

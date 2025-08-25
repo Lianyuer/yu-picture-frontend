@@ -16,6 +16,7 @@ import { useRouter } from 'vue-router'
 import { listSpaceVoByPageUsingPost } from '@/api/kongjianxiangguanjiekou.ts'
 import { message } from 'ant-design-vue'
 import { onMounted } from 'vue'
+import { SPACE_TYPE_ENUM } from '@/constant/space.ts'
 
 const router = useRouter()
 const loginUserStore = useLoginUserStore()
@@ -31,12 +32,18 @@ const checkUserSpace = async () => {
   const res = await listSpaceVoByPageUsingPost({
     userId: loginUser.id,
     current: 1,
-    size: 1,
+    size: 10, // 返回的空间数量，目前每种类型(私有/团队)的空间最多创建一个
   })
+  console.log(res, '获取用户空间信息')
   if (res.data.code == 0) {
-    if (res.data.data?.records?.length > 0) {
-      const space = res.data.data.records[0]
-      router.replace(`/space/${space.id}`)
+    const spaceList = res.data.data?.records
+    if (spaceList.length > 0) {
+      // const space = res.data.data.records[0]
+      // 查询空间列表返回的数据根据创建时间降序排列
+      // 找到创建的私有空间，直接筛选私有空间，找到第一个。暂不考虑其他创建多个私有空间的情况
+      const mySpaceList = spaceList.filter((item) => item.spaceType == SPACE_TYPE_ENUM.PRIVATE)
+      const mySpace = mySpaceList[0]
+      router.replace(`/space/${mySpace.id}`)
     } else {
       router.replace('/addSpace')
       message.warn('请先创建空间')

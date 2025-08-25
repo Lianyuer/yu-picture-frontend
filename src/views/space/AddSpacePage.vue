@@ -1,6 +1,8 @@
 <template>
   <div id="add-space-page">
-    <h2 style="margin-bottom: 22px">{{ route.query?.id ? '修改空间' : '创建空间' }}</h2>
+    <h2 style="margin-bottom: 22px">
+      {{ route.query?.id ? '修改' : '创建' }}{{ SPACE_TYPE_MAP[spaceType] }}
+    </h2>
     <!--  空间信息表单  -->
     <a-form :model="spaceForm" name="basic" autocomplete="off" @finish="handleSubmit">
       <a-form-item
@@ -45,7 +47,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 
 import { message } from 'ant-design-vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -55,7 +57,7 @@ import {
   listSpaceLevelUsingGet,
   updateSpaceUsingPost,
 } from '@/api/kongjianxiangguanjiekou.ts'
-import { SPACE_LEVEL_OPTIONS } from '@/constant/space.ts'
+import { SPACE_LEVEL_OPTIONS, SPACE_TYPE_ENUM, SPACE_TYPE_MAP } from '@/constant/space.ts'
 import { formatSize } from '../../utils'
 
 const oldSpace = ref<API.SpaceVO>()
@@ -74,6 +76,7 @@ const handleSubmit = async (values) => {
   if (!spaceId) {
     res = await addSpaceUsingPost({
       ...spaceForm,
+      spaceType: spaceType.value,
     })
   } else {
     // 编辑
@@ -88,7 +91,7 @@ const handleSubmit = async (values) => {
       router.back()
     } else {
       message.success('创建成功')
-      router.push(`/space/${spaceId}`)
+      router.push(`/space/${res.data.data}`)
     }
   } else {
     message.error('创建失败，' + res.data.message)
@@ -96,6 +99,15 @@ const handleSubmit = async (values) => {
 }
 
 const route = useRoute()
+// 空间类别
+const spaceType = computed(() => {
+  if (route.query?.type) {
+    return route.query?.type
+  } else {
+    return SPACE_TYPE_ENUM.PRIVATE
+  }
+})
+
 const getOldSpace = async () => {
   const id = route.query?.id
   if (id) {

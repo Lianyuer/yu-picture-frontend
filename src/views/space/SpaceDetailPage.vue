@@ -8,7 +8,9 @@
     </div>
     <!-- 空间信息 -->
     <a-flex justify="space-between" align="center" style="margin-bottom: 22px">
-      <h2 style="margin-bottom: 0">{{ space.spaceName }}（私有空间）</h2>
+      <h2 style="margin-bottom: 0">
+        {{ space.spaceName }}（{{ SPACE_TYPE_MAP[space.spaceType] }}）
+      </h2>
       <a-space size="middle">
         <a-button type="primary" :href="`/addPicture?spaceId=${props.id}`">+ 创建图片</a-button>
         <a-button
@@ -17,8 +19,8 @@
           ghost
           :href="`/spaceAnalyze?spaceId=${props.id}`"
           target="_blank"
-          >空间分析</a-button
-        >
+          >空间分析
+        </a-button>
         <a-button :icon="h(EditOutlined)" @click="doBatchEdit">批量编辑</a-button>
         <a-tooltip :title="`${formatSize(space.totalSize)} / ${formatSize(space.maxSize)}`">
           <a-progress
@@ -51,7 +53,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import {
   listPictureVoByPageUsingPost,
   searchPictureByColorUsingPost,
@@ -66,6 +68,7 @@ import 'vue3-colorpicker/style.css'
 import { EditOutlined, BarChartOutlined } from '@ant-design/icons-vue'
 import { h } from 'vue'
 import PictureBatchEditModal from '@/components/PictureBatchEditModal.vue'
+import { SPACE_TYPE_MAP } from '../../constant/space.ts'
 
 // 定义数据
 const loading = ref(true)
@@ -181,6 +184,15 @@ onMounted(() => {
   fetchSpaceDetail()
   fetchData()
 })
+
+//  watch 监听空间 id 变量
+watch(
+  () => props.id,
+  (newSpaceId) => {
+    fetchSpaceDetail()
+    fetchData()
+  },
+)
 </script>
 
 <style scoped>

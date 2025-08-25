@@ -71,6 +71,12 @@ declare namespace API {
     message?: string
   }
 
+  type BaseResponseListSpaceUserVO_ = {
+    code?: number
+    data?: SpaceUserVO[]
+    message?: string
+  }
+
   type BaseResponseLoginUserVO_ = {
     code?: number
     data?: LoginUserVO
@@ -128,6 +134,12 @@ declare namespace API {
   type BaseResponseSpaceUsageAnalyzeResponse_ = {
     code?: number
     data?: SpaceUsageAnalyzeResponse
+    message?: string
+  }
+
+  type BaseResponseSpaceUser_ = {
+    code?: number
+    data?: SpaceUser
     message?: string
   }
 
@@ -431,6 +443,7 @@ declare namespace API {
     id?: number
     introduction?: string
     name?: string
+    permissionList?: string[]
     picColor?: string
     picFormat?: string
     picHeight?: number
@@ -468,6 +481,7 @@ declare namespace API {
     maxSize?: number
     spaceLevel?: number
     spaceName?: string
+    spaceType?: number
     totalCount?: number
     totalSize?: number
     updateTime?: string
@@ -477,6 +491,7 @@ declare namespace API {
   type SpaceAddDTO = {
     spaceLevel?: number
     spaceName?: string
+    spaceType?: number
   }
 
   type SpaceCategoryAnalyzeResponse = {
@@ -488,6 +503,7 @@ declare namespace API {
   type SpaceEditDTO = {
     id?: number
     spaceName?: string
+    spaceType?: number
   }
 
   type SpaceLevel = {
@@ -505,6 +521,7 @@ declare namespace API {
     sortOrder?: string
     spaceLevel?: number
     spaceName?: string
+    spaceType?: number
     userId?: number
   }
 
@@ -524,6 +541,7 @@ declare namespace API {
     maxSize?: number
     spaceLevel?: number
     spaceName?: string
+    spaceType?: number
   }
 
   type SpaceUsageAnalyzeResponse = {
@@ -535,9 +553,47 @@ declare namespace API {
     usedSize?: number
   }
 
+  type SpaceUser = {
+    createTime?: string
+    id?: number
+    spaceId?: number
+    spaceRole?: string
+    updateTime?: string
+    userId?: number
+  }
+
+  type SpaceUserAddRequest = {
+    spaceId?: number
+    spaceRole?: string
+    userId?: number
+  }
+
   type SpaceUserAnalyzeResponse = {
     count?: number
     period?: string
+  }
+
+  type SpaceUserEditRequest = {
+    id?: number
+    spaceRole?: string
+  }
+
+  type SpaceUserQueryRequest = {
+    id?: number
+    spaceId?: number
+    spaceRole?: string
+    userId?: number
+  }
+
+  type SpaceUserVO = {
+    createTime?: string
+    id?: number
+    spaceId?: number
+    spaceRole?: string
+    spaceVO?: SpaceVO
+    updateTime?: string
+    userId?: number
+    userVO?: UserVO
   }
 
   type SpaceVO = {
@@ -546,8 +602,10 @@ declare namespace API {
     id?: number
     maxCount?: number
     maxSize?: number
+    permissionList?: string[]
     spaceLevel?: number
     spaceName?: string
+    spaceType?: number
     totalCount?: number
     totalSize?: number
     updateTime?: string
