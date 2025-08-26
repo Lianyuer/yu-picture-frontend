@@ -59,6 +59,7 @@ import {
 } from '@/api/kongjianxiangguanjiekou.ts'
 import { SPACE_LEVEL_OPTIONS, SPACE_TYPE_ENUM, SPACE_TYPE_MAP } from '@/constant/space.ts'
 import { formatSize } from '../../utils'
+import eventBus, { EVENTS } from '@/utils/eventBus'
 
 const oldSpace = ref<API.SpaceVO>()
 const spaceForm = reactive<API.SpaceAddDTO | API.SpaceEditDTO>({})
@@ -92,6 +93,13 @@ const handleSubmit = async (values) => {
     } else {
       message.success('创建成功')
       router.push(`/space/${res.data.data}`)
+      // 如果是团队空间创建成功，则通知全局侧边栏组件重新获取空间列表
+      if (spaceType.value == SPACE_TYPE_ENUM.TEAM) {
+        eventBus.emit(EVENTS.SPACE_CREATED, {
+          message: '团队空间创建成功',
+          timeStamp: new Date().getTime(),
+        })
+      }
     }
   } else {
     message.error('创建失败，' + res.data.message)
