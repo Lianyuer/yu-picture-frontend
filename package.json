@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "run-p \"build-only {@}\" --",
+    "build": "run-p type-check \"build-only {@}\" --",
     "openapi": "node openapi.config.js",
     "preview": "vite preview",
     "build-only": "vite build",
@@ -21,7 +21,6 @@
     "echarts-wordcloud": "^2.1.0",
     "file-saver": "^2.0.5",
     "lodash-es": "^4.17.21",
-    "mitt": "^3.0.1",
     "pinia": "^2.2.6",
     "vue": "^3.5.13",
     "vue-cropper": "^1.1.4",
