@@ -11,13 +11,14 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { computed, h, ref, watchEffect } from 'vue'
+import { computed, h, onMounted, ref, watchEffect } from 'vue'
 import { PictureOutlined, UserOutlined, TeamOutlined } from '@ant-design/icons-vue'
 import { useRouter } from 'vue-router'
 import { SPACE_TYPE_ENUM } from '@/constant/space.ts'
 import { listMyTeamSpaceUsingPost } from '@/api/kongjianchengyuanxiangguanjiekou.ts'
 import { message } from 'ant-design-vue'
 import { useLoginUserStore } from '@/stores/loginUserStore.ts'
+import eventBus, { EVENTS } from '@/utils/eventBus'
 
 const router = useRouter()
 const loginUser = useLoginUserStore().loginUser
@@ -81,6 +82,12 @@ const fetchTeamSpaceList = async () => {
     message.error('获取团队空间信息失败' + res.data.message)
   }
 }
+
+onMounted(() => {
+  eventBus.on(EVENTS.SPACE_CREATED, () => {
+    fetchTeamSpaceList()
+  })
+})
 
 /**
  * 监听变量，改变时触发数据的重新加载

@@ -59,6 +59,7 @@ import {
 } from '@/api/kongjianxiangguanjiekou.ts'
 import { SPACE_LEVEL_OPTIONS, SPACE_TYPE_ENUM, SPACE_TYPE_MAP } from '@/constant/space.ts'
 import { formatSize } from '../../utils'
+import eventBus, { EVENTS } from '@/utils/eventBus'
 
 const oldSpace = ref<API.SpaceVO>()
 const spaceForm = reactive<API.SpaceAddDTO | API.SpaceEditDTO>({})
@@ -90,6 +91,11 @@ const handleSubmit = async (values) => {
       message.success('修改成功')
       router.back()
     } else {
+      // 发送事件通知侧边栏刷新
+      eventBus.emit(EVENTS.SPACE_CREATED, {
+        message: '空间创建成功',
+        timestamp: new Date().getTime(),
+      })
       message.success('创建成功')
       router.push(`/space/${res.data.data}`)
     }
