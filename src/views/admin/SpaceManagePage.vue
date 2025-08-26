@@ -94,7 +94,7 @@
               <a-divider type="vertical" />
             </span>
             <a-popconfirm
-              title="确认删除该图片吗?"
+              title="确认删除该空间吗?"
               ok-text="确认"
               cancel-text="取消"
               @confirm="onConfirm(record.id)"
