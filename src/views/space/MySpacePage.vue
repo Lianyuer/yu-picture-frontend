@@ -34,7 +34,6 @@ const checkUserSpace = async () => {
     current: 1,
     size: 10, // 返回的空间数量，目前每种类型(私有/团队)的空间最多创建一个
   })
-  console.log(res, '获取用户空间信息')
   if (res.data.code == 0) {
     const spaceList = res.data.data?.records
     if (spaceList.length > 0) {
