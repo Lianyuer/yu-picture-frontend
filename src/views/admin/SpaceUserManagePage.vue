@@ -13,7 +13,7 @@
       </a-form-item>
     </a-form>
     <div style="margin-bottom: 16px"></div>
-    <a-table :columns="columns" :data-source="dataList">
+    <a-table :columns="columns" :data-source="processedDataList">
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'userInfo'">
           <a-space>
@@ -50,7 +50,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref, watchEffect } from 'vue'
 
 import { message } from 'ant-design-vue'
 import dayjs from 'dayjs'
@@ -120,6 +120,7 @@ const handleSubmit = async () => {
   })
   if (res.data.code == 0 && res.data.data) {
     message.success('添加成功')
+    formData.userId = ''
     await fetchData()
   } else {
     message.error('添加失败，' + res.data.message)
@@ -140,19 +141,24 @@ const doDelete = async (id: number) => {
   }
 }
 
-// 初始化
-const nameInitialize = () => {
-  dataList.value = dataList.value.map((item: any) => {
-    if (item.userVO.userName != null) {
-      item.userVO.avatarName = item.userVO.userName.slice(-2)
-      return item
+// 使用计算属性来处理数据转换
+const processedDataList = computed(() => {
+  return dataList.value.map((item: any) => {
+    if (item?.userVO?.userName != null) {
+      return {
+        ...item,
+        userVO: {
+          ...item.userVO,
+          avatarName: item.userVO.userName.slice(-2),
+        },
+      }
     }
+    return item
   })
-}
+})
 
 onMounted(async () => {
   await fetchData()
-  nameInitialize()
 })
 </script>
 
