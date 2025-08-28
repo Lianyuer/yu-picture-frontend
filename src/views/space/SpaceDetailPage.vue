@@ -12,7 +12,7 @@
         {{ space.spaceName }}（{{ SPACE_TYPE_MAP[space.spaceType] }}）
       </h2>
       <a-space size="middle">
-        <a-button type="primary" :href="`/addPicture?spaceId=${props.id}`">+ 创建图片</a-button>
+        <a-button type="primary" @click="handleClickCreatePic">+ 创建图片</a-button>
         <a-button
           :icon="h(BarChartOutlined)"
           type="primary"
@@ -69,6 +69,7 @@ import { EditOutlined, BarChartOutlined } from '@ant-design/icons-vue'
 import { h } from 'vue'
 import PictureBatchEditModal from '@/components/PictureBatchEditModal.vue'
 import { SPACE_TYPE_MAP } from '../../constant/space.ts'
+import router from '@/router'
 
 // 定义数据
 const loading = ref(true)
@@ -79,6 +80,10 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+
+const handleClickCreatePic = () => {
+  router.push(`/addPicture?spaceId=${props.id}`)
+}
 
 // 获取空间详情
 const fetchSpaceDetail = async () => {
