@@ -17,6 +17,21 @@ export async function addSpaceUserUsingPost(
   })
 }
 
+/** 批量添加成员到空间 POST /api/spaceUser/batch/add */
+export async function batchAddSpaceUserUsingPost(
+  body: API.BatchSpaceUserAddRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseString_>('/api/spaceUser/batch/add', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  })
+}
+
 /** 从空间移除成员 POST /api/spaceUser/delete */
 export async function deleteSpaceUserUsingPost(
   body: API.DeleteRequest,

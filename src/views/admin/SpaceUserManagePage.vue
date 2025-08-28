@@ -4,14 +4,13 @@
       <h2>空间成员管理</h2>
     </a-flex>
     <div style="margin-bottom: 20px" />
-    <a-form layout="inline" :model="formData" @finish="handleSubmit">
-      <a-form-item label="用户 id" name="userId">
-        <a-input v-model:value="formData.userId" placeholder="请输入用户 id" allow-clear />
-      </a-form-item>
-      <a-form-item>
-        <a-button type="primary" html-type="submit">添加成员</a-button>
-      </a-form-item>
-    </a-form>
+    <a-button type="primary" @click="doAddSpaceUser">添加/删除成员</a-button>
+    <UserAddTansferModal
+      ref="userAddTransferModalRef"
+      :spaceId="props.id"
+      :selectedList="dataList"
+      :onSuccess="handleBatchAddSuccess"
+    />
     <div style="margin-bottom: 16px"></div>
     <a-table :columns="columns" :data-source="processedDataList">
       <template #bodyCell="{ column, record }">
@@ -67,6 +66,8 @@ import {
   getSpaceUserListUsingPost,
 } from '@/api/kongjianchengyuanxiangguanjiekou.ts'
 import { SPACE_ROLE_OPTIONS } from '@/constant/space.ts'
+import UserAddTansferModal from '@/components/UserAddTansferModal.vue'
+import eventBus, { EVENTS } from '@/utils/eventBus'
 
 const columns = [
   {
@@ -134,6 +135,14 @@ const handleSubmit = async () => {
   }
 }
 
+const userAddTransferModalRef = ref()
+
+const doAddSpaceUser = () => {
+  if (userAddTransferModalRef.value) {
+    userAddTransferModalRef.value.showModal()
+  }
+}
+
 // 删除操作
 const handleDel = async (id: string) => {
   const res = await deleteSpaceUserUsingPost({ id })
@@ -172,8 +181,16 @@ const processedDataList = computed(() => {
   })
 })
 
+// 更新空间成员列表数据
+const handleBatchAddSuccess = () => {
+  fetchData()
+}
+
 onMounted(async () => {
   await fetchData()
+  // eventBus.on(EVENTS.SPACE_USER_ADD, () => {
+  //   fetchData()
+  // })
 })
 </script>
 

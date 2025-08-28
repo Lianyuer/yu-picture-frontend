@@ -167,6 +167,12 @@ declare namespace API {
     message?: string
   }
 
+  type BatchSpaceUserAddRequest = {
+    spaceId?: number
+    spaceRole?: string
+    userIds?: number[]
+  }
+
   type CreateOutPaintingTaskResponse = {
     code?: string
     message?: string

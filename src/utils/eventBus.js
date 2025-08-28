@@ -8,6 +8,7 @@ export const EVENTS = {
   SPACE_CREATED: 'space-created',
   SPACE_UPDATED: 'space-updated',
   SPACE_DELETED: 'space-deleted',
+  // SPACE_USER_ADD: 'space-user-add',
 }
 
 export default eventBus
