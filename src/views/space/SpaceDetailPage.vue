@@ -14,6 +14,15 @@
       <a-space size="middle">
         <a-button type="primary" @click="handleClickCreatePic">+ 创建图片</a-button>
         <a-button
+          v-if="space.spaceType == 1"
+          type="primary"
+          ghost
+          :icon="h(TeamOutlined)"
+          @click="router.replace(`/spaceUserManage/${id}`)"
+        >
+          成员管理
+        </a-button>
+        <a-button
           :icon="h(BarChartOutlined)"
           type="primary"
           ghost
@@ -65,7 +74,7 @@ import { formatSize } from '@/utils'
 import PictureSearchForm from '@/components/PictureSearchForm.vue'
 import { ColorPicker } from 'vue3-colorpicker'
 import 'vue3-colorpicker/style.css'
-import { EditOutlined, BarChartOutlined } from '@ant-design/icons-vue'
+import { EditOutlined, BarChartOutlined, TeamOutlined } from '@ant-design/icons-vue'
 import { h } from 'vue'
 import PictureBatchEditModal from '@/components/PictureBatchEditModal.vue'
 import { SPACE_TYPE_MAP } from '../../constant/space.ts'
