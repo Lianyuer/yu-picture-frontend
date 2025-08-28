@@ -24,7 +24,7 @@
             >
               {{ record?.userVO?.avatarName }}
             </a-avatar>
-            <a-avatar v-else size="large" :src="record.userVO.userAvatar"> </a-avatar>
+            <a-avatar v-else size="large" :src="record.userVO.userAvatar"></a-avatar>
             {{ record?.userVO?.userName }}
           </a-space>
         </template>
@@ -34,8 +34,7 @@
             v-model:value="record.spaceRole"
             style="width: 120px"
             :options="SPACE_ROLE_OPTIONS"
-            @focus="focus"
-            @change="handleChange"
+            @change="handleEdit(record.id, record.spaceRole)"
           >
           </a-select>
         </template>
@@ -43,20 +42,28 @@
           {{ dayjs(record.createTime).format('YYYY-MM-DD HH:mm:ss') }}
         </template>
         <template v-if="column.key === 'action'">
-          <a-button class="delBtn" danger type="link">删除</a-button>
+          <a-popconfirm
+            title="确认删除该成员吗"
+            ok-text="确认"
+            cancel-text="取消"
+            @confirm="handleDel(record.id)"
+          >
+            <a-button class="delBtn" danger type="link">删除</a-button>
+          </a-popconfirm>
         </template>
       </template>
     </a-table>
   </div>
 </template>
 <script lang="ts" setup>
-import { computed, onMounted, reactive, ref, watchEffect } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 
 import { message } from 'ant-design-vue'
 import dayjs from 'dayjs'
-import { deleteSpaceUsingPost } from '@/api/kongjianxiangguanjiekou.ts'
 import {
   addSpaceUserUsingPost,
+  deleteSpaceUserUsingPost,
+  editSpaceUserUsingPost,
   getSpaceUserListUsingPost,
 } from '@/api/kongjianchengyuanxiangguanjiekou.ts'
 import { SPACE_ROLE_OPTIONS } from '@/constant/space.ts'
@@ -127,17 +134,25 @@ const handleSubmit = async () => {
   }
 }
 
-const focus = () => {}
-
-const handleChange = () => {}
-
 // 删除操作
-const doDelete = async (id: number) => {
-  const res = await deleteSpaceUsingPost({ id })
+const handleDel = async (id: string) => {
+  const res = await deleteSpaceUserUsingPost({ id })
   if (res.data.code === 0) {
     message.success('删除成功')
+    await fetchData()
   } else {
     message.error('删除失败，' + res.data.message)
+  }
+}
+
+// 编辑操作
+const handleEdit = async (id: number, spaceRole: string) => {
+  const res = await editSpaceUserUsingPost({ id, spaceRole })
+  if (res.data.code === 0) {
+    message.success('修改成功')
+    await fetchData()
+  } else {
+    message.error('修改失败，' + res.data.message)
   }
 }
 
