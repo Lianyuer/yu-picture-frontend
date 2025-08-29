@@ -12,9 +12,11 @@
         {{ space.spaceName }}（{{ SPACE_TYPE_MAP[space.spaceType] }}）
       </h2>
       <a-space size="middle">
-        <a-button type="primary" @click="handleClickCreatePic">+ 创建图片</a-button>
+        <a-button type="primary" @click="handleClickCreatePic" v-if="canUploadPicture"
+          >+ 创建图片</a-button
+        >
         <a-button
-          v-if="space.spaceType == 1"
+          v-if="space.spaceType == 1 && canManageSpaceUser"
           type="primary"
           ghost
           :icon="h(TeamOutlined)"
@@ -23,6 +25,7 @@
           成员管理
         </a-button>
         <a-button
+          v-if="canManageSpaceUser"
           :icon="h(BarChartOutlined)"
           type="primary"
           ghost
@@ -30,7 +33,9 @@
           target="_blank"
           >空间分析
         </a-button>
-        <a-button :icon="h(EditOutlined)" @click="doBatchEdit">批量编辑</a-button>
+        <a-button :icon="h(EditOutlined)" @click="doBatchEdit" v-if="canEditPicture"
+          >批量编辑</a-button
+        >
         <a-tooltip :title="`${formatSize(space.totalSize)} / ${formatSize(space.maxSize)}`">
           <a-progress
             type="circle"
@@ -41,7 +46,14 @@
       </a-space>
     </a-flex>
     <!--  图片列表  -->
-    <PictureList :dataList="dataList" :loading="loading" :showOp="true" :onReload="onReload" />
+    <PictureList
+      :dataList="dataList"
+      :loading="loading"
+      :showOp="true"
+      :onReload="onReload"
+      :canEdit="canEditPicture"
+      :canDelete="canDeletePicture"
+    />
     <div style="display: flex; justify-content: end; align-items: center">
       <div style="text-align: right">图片总数 {{ space.totalCount }} / {{ space.maxCount }}</div>
       <a-pagination
@@ -62,7 +74,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import {
   listPictureVoByPageUsingPost,
   searchPictureByColorUsingPost,
@@ -77,12 +89,25 @@ import 'vue3-colorpicker/style.css'
 import { EditOutlined, BarChartOutlined, TeamOutlined } from '@ant-design/icons-vue'
 import { h } from 'vue'
 import PictureBatchEditModal from '@/components/PictureBatchEditModal.vue'
-import { SPACE_TYPE_MAP } from '../../constant/space.ts'
+import { SPACE_PERMISSION_ENUM, SPACE_TYPE_MAP } from '../../constant/space.ts'
 import router from '@/router'
 
 // 定义数据
 const loading = ref(true)
 const space = ref<API.SpaceVO>({})
+
+// 通用权限检查函数
+const createPermissionChecker = (permission: string) => {
+  return computed(() => {
+    return (space.value.permissionList ?? []).includes(permission)
+  })
+}
+
+// 定义权限检查
+const canManageSpaceUser = createPermissionChecker(SPACE_PERMISSION_ENUM.SPACE_USER_MANAGE)
+const canUploadPicture = createPermissionChecker(SPACE_PERMISSION_ENUM.PICTURE_UPLOAD)
+const canEditPicture = createPermissionChecker(SPACE_PERMISSION_ENUM.PICTURE_EDIT)
+const canDeletePicture = createPermissionChecker(SPACE_PERMISSION_ENUM.PICTURE_DELETE)
 
 interface Props {
   id: string | number
@@ -197,6 +222,7 @@ const onBatchEditPicturesSuccess = () => {
 onMounted(() => {
   fetchSpaceDetail()
   fetchData()
+  console.log('canManageSpaceUser', canManageSpaceUser)
 })
 
 //  watch 监听空间 id 变量

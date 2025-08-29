@@ -17,7 +17,7 @@
                 {{ picture.introduction ?? '-' }}
               </a-descriptions-item>
               <a-descriptions-item label="分类"
-              >{{ picture.category ?? '默认' }}
+                >{{ picture.category ?? '默认' }}
               </a-descriptions-item>
               <a-descriptions-item label="标签">
                 <a-tag v-for="tag in picture.tags">{{ tag }}</a-tag>
@@ -39,7 +39,7 @@
               </a-descriptions-item>
               <a-descriptions-item label="主色调">
                 <a-space>
-                  {{  picture.picColor ?? '-' }}
+                  {{ picture.picColor ?? '-' }}
                   <div
                     v-if="picture.picColor"
                     :style="{
@@ -60,17 +60,14 @@
               >
                 免费下载
               </a-button>
-              <a-button
-                :icon="h(ShareAltOutlined)"
-                type="primary"
-                ghost
-                @click="doShare(picture)"
-              >
+              <a-button :icon="h(ShareAltOutlined)" type="primary" ghost @click="doShare(picture)">
                 分享
               </a-button>
-              <a-space class="editOrDel" v-if="canEdit">
-                <a-button @click="doEdit" :icon="h(EditOutlined)">编辑</a-button>
-                <a-button danger :icon="h(DeleteOutlined)" @click="doDelete">删除</a-button>
+              <a-space class="editOrDel">
+                <a-button @click="doEdit" :icon="h(EditOutlined)" v-if="canEdit">编辑</a-button>
+                <a-button danger :icon="h(DeleteOutlined)" @click="doDelete" v-if="canDelete"
+                  >删除</a-button
+                >
               </a-space>
             </a-space>
           </a-card>
@@ -89,8 +86,14 @@ import { useRoute, useRouter } from 'vue-router'
 import { downloadImage, formatSize, toHexColor } from '@/utils'
 import { useLoginUserStore } from '@/stores/loginUserStore.ts'
 import { h } from 'vue'
-import { DownloadOutlined, EditOutlined, DeleteOutlined, ShareAltOutlined } from '@ant-design/icons-vue'
+import {
+  DownloadOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  ShareAltOutlined,
+} from '@ant-design/icons-vue'
 import ShareModal from '@/components/ShareModal.vue'
+import { SPACE_PERMISSION_ENUM } from '@/constant/space.ts'
 
 // 定义数据
 const loading = ref(true)
@@ -106,7 +109,7 @@ const props = defineProps<Props>()
 const fetchData = async () => {
   loading.value = true
   const res = await getPictureVoByIdUsingGet({
-    id: props.id
+    id: props.id,
   })
   if (res.data.code === 0 && res.data.data) {
     picture.value = res.data.data
@@ -136,17 +139,27 @@ const doShare = (picture: API.PictureVO) => {
 }
 
 const loginUserStore = useLoginUserStore()
-// 是否具有编辑权限
-const canEdit = computed(() => {
-  const loginUser = loginUserStore.loginUser
-  // 未登录不可编辑
-  if (!loginUser.id) {
-    return false
-  }
-  // 仅本人或管理员可编辑
-  const user = picture.value.user || {}
-  return loginUser.id === user.id || loginUser.userRole === 'admin'
-})
+// // 是否具有编辑权限
+// const canEdit = computed(() => {
+//   const loginUser = loginUserStore.loginUser
+//   // 未登录不可编辑
+//   if (!loginUser.id) {
+//     return false
+//   }
+//   // 仅本人或管理员可编辑
+//   const user = picture.value.user || {}
+//   return loginUser.id === user.id || loginUser.userRole === 'admin'
+// })
+
+// 通用权限检查函数
+function createPermissionChecker(permission: string) {
+  return computed(() => {
+    return (picture.value.permissionList ?? []).includes(permission)
+  })
+}
+// 定义权限检查
+const canEdit = createPermissionChecker(SPACE_PERMISSION_ENUM.PICTURE_EDIT)
+const canDelete = createPermissionChecker(SPACE_PERMISSION_ENUM.PICTURE_DELETE)
 
 const router = useRouter()
 const route = useRoute()
@@ -159,7 +172,7 @@ const doEdit = () => {
 // 删除图片
 const doDelete = async () => {
   const res = await deletePictureUsingPost({
-    id: picture.value.id
+    id: picture.value.id,
   })
   if (res.data.code === 0 && res.data.data) {
     message.success('删除成功')

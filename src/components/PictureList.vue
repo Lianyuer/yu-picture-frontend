@@ -26,10 +26,10 @@
               </template>
             </a-card-meta>
             <template v-if="showOp" #actions>
-              <share-alt-outlined @click="(e: any) => doShare(picture,e)" />
+              <share-alt-outlined @click="(e: any) => doShare(picture, e)" />
               <search-outlined @click="(e: any) => doSearch(picture, e)" />
-              <edit-outlined @click="(e: any) => doEdit(picture, e)" />
-              <delete-outlined @click="(e: any) => doDelete(picture, e)" />
+              <edit-outlined @click="(e: any) => doEdit(picture, e)" v-if="canEdit" />
+              <delete-outlined @click="(e: any) => doDelete(picture, e)" v-if="canDelete" />
             </template>
           </a-card>
         </a-list-item>
@@ -42,7 +42,12 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { deletePictureUsingPost } from '@/api/tupianxiangguanjiekou.ts'
-import { SearchOutlined, EditOutlined, DeleteOutlined, ShareAltOutlined } from '@ant-design/icons-vue'
+import {
+  SearchOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  ShareAltOutlined,
+} from '@ant-design/icons-vue'
 import { message } from 'ant-design-vue'
 import ShareModal from '@/components/ShareModal.vue'
 import { ref } from 'vue'
@@ -52,21 +57,24 @@ interface Props {
   loading?: boolean
   showOp?: boolean
   onReload: () => {}
+  canEdit: boolean
+  canDelete: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   dataList: () => [],
   loading: false,
   showOp: false,
-  onReload: () => {
-  }
+  onReload: () => {},
+  canEdit: false,
+  canDelete: false,
 })
 
 const router = useRouter()
 // 跳转图片详情页
 const doClickPicture = (picture: API.PictureVO) => {
   router.push({
-    path: `/picture/${picture.id}`
+    path: `/picture/${picture.id}`,
   })
 }
 
@@ -103,8 +111,8 @@ const doEdit = (picture, e) => {
     path: '/addPicture',
     query: {
       id: picture.id,
-      spaceId: picture.spaceId
-    }
+      spaceId: picture.spaceId,
+    },
   })
 }
 
@@ -112,7 +120,7 @@ const doEdit = (picture, e) => {
 const doDelete = async (picture, e) => {
   e.stopPropagation()
   const res = await deletePictureUsingPost({
-    id: picture.id
+    id: picture.id,
   })
   if (res.data.code === 0 && res.data.data) {
     message.success('删除成功')
