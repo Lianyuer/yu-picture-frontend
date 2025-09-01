@@ -15,17 +15,20 @@
     <a-table :columns="columns" :data-source="processedDataList">
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'userInfo'">
-          <a-space>
-            <a-avatar
-              v-if="!record.userVO.userAvatar"
-              size="large"
-              :style="{ backgroundColor: '#1890ff', verticalAlign: 'middle' }"
-            >
-              {{ record?.userVO?.avatarName }}
-            </a-avatar>
-            <a-avatar v-else size="large" :src="record.userVO.userAvatar"></a-avatar>
-            {{ record?.userVO?.userName }}
-          </a-space>
+          <a-tooltip>
+            <template #title>账号：{{ record.userVO.userAccount }}</template>
+            <a-space>
+              <a-avatar
+                v-if="!record.userVO.userAvatar"
+                size="large"
+                :style="{ backgroundColor: '#1890ff', verticalAlign: 'middle' }"
+              >
+                {{ record?.userVO?.avatarName }}
+              </a-avatar>
+              <a-avatar v-else size="large" :src="record.userVO.userAvatar"></a-avatar>
+              {{ record?.userVO?.userName }}
+            </a-space>
+          </a-tooltip>
         </template>
         <template v-if="column.dataIndex === 'spaceRole'">
           <a-select
