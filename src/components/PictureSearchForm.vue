@@ -26,7 +26,7 @@
           allowClear
         ></a-input>
       </a-form-item>
-      <a-form-item label="类型" name="picFormat">
+      <a-form-item label="类型" name="category">
         <a-auto-complete
           v-model:value="searchParams.category"
           placeholder="输入类型"

@@ -18,7 +18,7 @@ import { uploadPictureByUrlUsingPost } from '@/api/tupianxiangguanjiekou.ts'
 
 interface Props {
   picture?: API.PictureVO
-  spaceId?: number
+  spaceId?: number | string
   onSuccess?: (newPicture: API.PictureVO) => void
 }
 
