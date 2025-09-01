@@ -66,7 +66,16 @@
       <template #bodyCell="{ column, record }">
         <!--    空间级别    -->
         <template v-if="column.key === 'spaceLevel'">
-          {{ SPACE_LEVEL_MAP[record.spaceLevel] }}
+          <a-tag
+            :color="record.spaceLevel == 2 ? '#108ee9' : record.spaceLevel == 1 ? '#2db7f5' : ''"
+            >{{ SPACE_LEVEL_MAP[record.spaceLevel] }}</a-tag
+          >
+        </template>
+        <!--    空间类型    -->
+        <template v-if="column.key === 'spaceType'">
+          <a-tag :color="record.spaceType == 0 ? '#108ee9' : '#2db7f5'">{{
+            SPACE_TYPE_MAP[record.spaceType]
+          }}</a-tag>
         </template>
         <!--    使用情况    -->
         <template v-if="column.key === 'spaceUseInfo'">
@@ -99,7 +108,7 @@
               cancel-text="取消"
               @confirm="onConfirm(record.id)"
             >
-              <a>删除</a>
+              <a-button style="padding: 0" danger type="link">删除</a-button>
             </a-popconfirm>
           </span>
         </template>
@@ -115,7 +124,7 @@ import dayjs from 'dayjs'
 import { useRouter } from 'vue-router'
 import { formatSize } from '../../utils'
 import { deleteSpaceUsingPost, listSpaceByPageUsingPost } from '@/api/kongjianxiangguanjiekou.ts'
-import { SPACE_LEVEL_MAP, SPACE_LEVEL_OPTIONS } from '../../constant/space.ts'
+import { SPACE_LEVEL_MAP, SPACE_LEVEL_OPTIONS, SPACE_TYPE_MAP } from '../../constant/space.ts'
 
 const columns = [
   {
@@ -132,6 +141,11 @@ const columns = [
     title: '空间级别',
     dataIndex: 'spaceLevel',
     key: 'spaceLevel',
+  },
+  {
+    title: '空间类型',
+    dataIndex: 'spaceType',
+    key: 'spaceType',
   },
   {
     title: '使用情况',
