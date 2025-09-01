@@ -20,7 +20,7 @@
       :model="searchParams"
       @finish="doSearch"
     >
-      <a-row wrap="wrap" gutter="30">
+      <a-row wrap="wrap" :gutter="30">
         <a-col :xs="24" :sm="12" :md="8" :lg="6">
           <a-form-item label="空间名称">
             <a-input
@@ -50,11 +50,9 @@
             />
           </a-form-item>
         </a-col>
-        <a-col :xs="24" :sm="24" :md="24" :lg="6">
-          <a-form-item>
-            <a-button type="primary" html-type="submit">搜索</a-button>
-          </a-form-item>
-        </a-col>
+        <a-form-item>
+          <a-button type="primary" html-type="submit">搜索</a-button>
+        </a-form-item>
       </a-row>
     </a-form>
     <a-table

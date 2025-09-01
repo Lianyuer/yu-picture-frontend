@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-modal v-model:visible="visible" :title="title" @cancel="handleCancel" :footer="null">
+    <a-modal v-model:open="open" :title="title" @cancel="handleCancel" :footer="null">
       <a-flex align="center" vertical>
         <a-qrcode
           error-level="H"
@@ -16,7 +16,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 
-const visible = ref<boolean>(false)
+const open = ref<boolean>(false)
 
 interface Props {
   title?: string
@@ -30,11 +30,11 @@ withDefaults(defineProps<Props>(), {
 })
 
 const showModal = () => {
-  visible.value = true
+  open.value = true
 }
 
 const handleCancel = () => {
-  visible.value = false
+  open.value = false
 }
 
 defineExpose({

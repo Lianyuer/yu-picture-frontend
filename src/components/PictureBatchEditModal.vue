@@ -1,6 +1,6 @@
 <template>
   <div id="picture-batch-edit-modal">
-    <a-modal v-model:visible="visible" title="批量编辑图片" @cancel="handleCancel" :footer="null">
+    <a-modal v-model:open="open" title="批量编辑图片" @cancel="handleCancel" :footer="null">
       <a-typography-paragraph type="secondary">
         * 图片编辑仅对当前列表图片生效
       </a-typography-paragraph>
@@ -54,7 +54,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {})
 
-const visible = ref<boolean>(false)
+const open = ref<boolean>(false)
 let formData = reactive({
   category: '',
   tags: [],
@@ -62,11 +62,11 @@ let formData = reactive({
 })
 
 const showModal = () => {
-  visible.value = true
+  open.value = true
 }
 
 const handleCancel = () => {
-  visible.value = false
+  open.value = false
 }
 
 const resetData = () => {

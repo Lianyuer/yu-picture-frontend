@@ -17,7 +17,7 @@
       :model="searchParams"
       @finish="doSearch"
     >
-      <a-row wrap="wrap" gutter="24">
+      <a-row wrap="wrap" :gutter="24">
         <a-col flex="1 1 200px">
           <a-form-item label="关键词">
             <a-input

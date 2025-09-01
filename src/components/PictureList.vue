@@ -56,9 +56,9 @@ interface Props {
   dataList?: API.PictureVO[]
   loading?: boolean
   showOp?: boolean
-  onReload: () => {}
-  canEdit: boolean
-  canDelete: boolean
+  onReload?: () => void
+  canEdit?: boolean
+  canDelete?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {

@@ -50,7 +50,7 @@
       :dataList="dataList"
       :loading="loading"
       :showOp="true"
-      :onReload="onReload"
+      :onReload="handleReload"
       :canEdit="canEditPicture"
       :canDelete="canDeletePicture"
     />
@@ -187,7 +187,8 @@ const fetchData = async () => {
   loading.value = false
 }
 
-const onReload = () => {
+const handleReload = () => {
+  console.log('重新加载数据')
   fetchData()
   fetchSpaceDetail()
 }
