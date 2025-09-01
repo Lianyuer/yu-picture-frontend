@@ -48,13 +48,13 @@ import { message } from 'ant-design-vue'
 
 interface Props {
   pictureList: API.PictureVO[]
-  spaceId: number
+  spaceId: number | string
   onSuccess: () => void
 }
 
 const props = withDefaults(defineProps<Props>(), {})
 
-const visible = ref<Boolean>(false)
+const visible = ref<boolean>(false)
 let formData = reactive({
   category: '',
   tags: [],

@@ -39,7 +39,7 @@
         <a-tooltip :title="`${formatSize(space.totalSize)} / ${formatSize(space.maxSize)}`">
           <a-progress
             type="circle"
-            :percent="((space.totalSize / space.maxSize) * 100).toFixed(1)"
+            :percent="Number(((space.totalSize / space.maxSize) * 100).toFixed(1))"
             :size="42"
           />
         </a-tooltip>
@@ -94,7 +94,9 @@ import router from '@/router'
 
 // 定义数据
 const loading = ref(true)
-const space = ref<API.SpaceVO>({})
+const space = ref<API.SpaceVO>({
+  id: 0,
+})
 
 // 通用权限检查函数
 const createPermissionChecker = (permission: string) => {
@@ -124,7 +126,7 @@ const fetchSpaceDetail = async () => {
   loading.value = true
   try {
     const res = await getSpaceVoByIdUsingGet({
-      id: props.id,
+      id: BigInt(props.id),
     })
     if (res.data.code === 0 && res.data.data) {
       space.value = res.data.data
@@ -171,14 +173,14 @@ const fetchData = async () => {
   loading.value = true
   // 转换搜索参数
   const params = {
-    spaceId: props.id,
+    spaceId: props.id.toString(),
     ...searchParams.value,
   }
 
   const res = await listPictureVoByPageUsingPost(params)
   if (res.data.code === 0 && res.data.data.records) {
     dataList.value = res.data.data.records ?? []
-    total.value = res.data.data.total ?? 0
+    total.value = Number(res.data.data.total) ?? 0
   } else {
     message.error('获取图片数据失败,' + res.data.message)
   }
@@ -222,7 +224,6 @@ const onBatchEditPicturesSuccess = () => {
 onMounted(() => {
   fetchSpaceDetail()
   fetchData()
-  console.log('canManageSpaceUser', canManageSpaceUser)
 })
 
 //  watch 监听空间 id 变量

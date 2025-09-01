@@ -42,7 +42,8 @@ const checkUserSpace = async () => {
       // 找到创建的私有空间，直接筛选私有空间，找到第一个。暂不考虑其他创建多个私有空间的情况
       const mySpaceList = spaceList.filter((item) => item.spaceType == SPACE_TYPE_ENUM.PRIVATE)
       const mySpace = mySpaceList[0]
-      router.replace(`/space/${mySpace.id}`)
+      const mySpaceId = BigInt(mySpace.id)
+      router.replace(`/space/${mySpaceId}`)
     } else {
       router.replace('/addSpace')
       message.warn('请先创建空间')
