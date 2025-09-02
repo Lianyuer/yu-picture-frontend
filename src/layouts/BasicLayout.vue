@@ -52,6 +52,7 @@ onMounted(() => {})
   left: 0;
   top: 0;
   bottom: 0;
+  z-index: 9999;
 }
 
 #basic-layout .content {
