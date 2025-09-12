@@ -52,11 +52,13 @@ import {
   PICTURE_EDIT_ACTION_MAP,
   PICTURE_EDIT_MESSAGE_TYPE_ENUM,
 } from '@/constant/picture.ts'
+import { SPACE_TYPE_ENUM } from '@/constant/space.ts'
 
 interface Props {
   imageUrl?: string
   picture?: API.PictureVO
   spaceId?: number | string
+  space: API.SpaceVO
   onSuccess?: (picture: API.PictureVO) => void
 }
 
@@ -150,9 +152,17 @@ const canEnterEdit = computed(() => {
 const canExitEdit = computed(() => {
   return editingUser.value?.id === loginUser.id
 })
+
+// 是否为团队空间
+const isTeamSpace = computed(() => {
+  return props.space?.spaceType === SPACE_TYPE_ENUM.TEAM
+})
+
 // 是否可以编辑
 const canEdit = computed(() => {
-  return editingUser.value?.id === loginUser.id
+  if (isTeamSpace.value) {
+    return editingUser.value?.id === loginUser.id
+  }
 })
 
 let websocket: PictureEditWebSocket | null
@@ -215,7 +225,10 @@ const initWebSocket = () => {
 }
 
 watchEffect(() => {
-  initWebSocket()
+  // 团队空间才初始化
+  if (isTeamSpace.value) {
+    initWebSocket()
+  }
 })
 
 onUnmounted(() => {

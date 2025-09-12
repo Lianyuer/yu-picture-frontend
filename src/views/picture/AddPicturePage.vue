@@ -29,6 +29,7 @@
       :imageUrl="picture?.url"
       :picture="picture"
       :spaceId="spaceId"
+      :space="space"
       :onSuccess="onCropSuccess"
     />
     <ImageOutPainting ref="imageOutPaintingRef" :picture="picture" :onSuccess="onSuccess" />
@@ -80,7 +81,7 @@
 
 <script setup lang="ts">
 import PictureUpload from '@/components/PictureUpload.vue'
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref, watchEffect } from 'vue'
 import {
   editPictureUsingPost,
   getPictureVoByIdUsingGet,
@@ -92,6 +93,7 @@ import UrlPictureUpload from '@/components/UrlPictureUpload.vue'
 import ImageCropper from '@/components/ImageCropper.vue'
 import ImageOutPainting from '@/components/ImageOutPainting.vue'
 import { useLoginUserStore } from '@/stores/loginUserStore.ts'
+import { getSpaceVoByIdUsingGet } from '@/api/kongjianxiangguanjiekou.ts'
 
 const loginUserStore = useLoginUserStore()
 const loginUser = loginUserStore.loginUser
@@ -203,6 +205,21 @@ const getOldPicture = async () => {
 onMounted(() => {
   getPictureTagCategory()
   getOldPicture()
+})
+
+const space = ref<API.SpaceVO>()
+
+const fetchData = async () => {
+  const res = await getSpaceVoByIdUsingGet({ id: spaceId.value })
+  if (res.data.code == 0 && res.data.data) {
+    space.value = res.data.data
+  } else {
+    message.error('空间数据获取失败', res.data.message)
+  }
+}
+
+watchEffect(() => {
+  fetchData()
 })
 </script>
 
