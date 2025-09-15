@@ -6,7 +6,7 @@
         type="primary"
         :loading="loading"
         @click="handleConfirm"
-        :disabled="!canEdit"
+        :disabled="!canEdit && isTeamSpace"
         >确定</a-button
       >
     </template>
@@ -23,7 +23,7 @@
       :centerBox="true"
     />
     <!-- 协同编辑操作 -->
-    <div class="image-edit-actions">
+    <div class="image-edit-actions" v-if="isTeamSpace">
       <a-space>
         <a-button v-if="editingUser" disabled> {{ editingUser.userName }}正在编辑</a-button>
         <a-button v-if="canEnterEdit" type="primary" ghost @click="enterEdit">进入编辑</a-button>
@@ -32,10 +32,18 @@
     </div>
     <div class="btn-actions">
       <a-space>
-        <a-button @click="changeScale(1)" class="btn" :disabled="!canEdit">放大</a-button>
-        <a-button @click="changeScale(-1)" class="btn" :disabled="!canEdit">缩小</a-button>
-        <a-button @click="rotateLeft" class="btn" :disabled="!canEdit">向左旋转</a-button>
-        <a-button @click="rotateRight" class="btn" :disabled="!canEdit">向右旋转</a-button>
+        <a-button @click="changeScale(1)" class="btn" :disabled="!canEdit && isTeamSpace"
+          >放大</a-button
+        >
+        <a-button @click="changeScale(-1)" class="btn" :disabled="!canEdit && isTeamSpace"
+          >缩小</a-button
+        >
+        <a-button @click="rotateLeft" class="btn" :disabled="!canEdit && isTeamSpace"
+          >向左旋转</a-button
+        >
+        <a-button @click="rotateRight" class="btn" :disabled="!canEdit && isTeamSpace"
+          >向右旋转</a-button
+        >
       </a-space>
     </div>
   </a-modal>
